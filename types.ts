@@ -14,6 +14,16 @@ export enum ServiceType {
 }
 
 // Interfaces
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  avatarUrl?: string;
+  hasSubscription: boolean;
+  subscriptionPlan?: 'start' | 'pro' | 'premium';
+}
+
 export interface Client {
   id: string;
   name: string;
