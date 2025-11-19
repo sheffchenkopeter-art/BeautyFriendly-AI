@@ -1,12 +1,30 @@
 import { GoogleGenAI } from "@google/genai";
 
 const getClient = () => {
+  // УВАГА: process.env.API_KEY автоматично підставляється середовищем.
+  // Якщо ви використовуєте Vite локально, використовуйте import.meta.env.VITE_API_KEY
   const apiKey = process.env.API_KEY;
   if (!apiKey) {
-    throw new Error("API Key not found via process.env.API_KEY");
+    console.error("API Key is missing! Check your environment variables.");
+    throw new Error("API Key not found");
   }
   return new GoogleGenAI({ apiKey });
 };
+
+// Системна інструкція, що включає "алгоритм" користувача
+const SYSTEM_INSTRUCTION = `
+Ти - елітний AI-асистент для професійних перукарів та колористів "BeautyFriendly AI".
+
+ТВОЇ ПРАВИЛА:
+1. Відповідай українською мовою.
+2. Будь лаконічним, професійним, але дружнім.
+3. Якщо питання стосується фарбування, використовуй "Алгоритм Колориста":
+   - Спочатку визнач базу клієнта (рівень глибини тону, фон освітлення).
+   - Визнач бажаний результат.
+   - Запропонуй точну формулу (грами фарби + грами окисника).
+   - Завжди нагадуй про тест на пасмі.
+4. Якщо питають про тренди, орієнтуйся на 2024-2025 роки (текстура, натуральність, "тиха розкіш").
+`;
 
 export const generateStylingAdvice = async (prompt: string): Promise<string> => {
   try {
@@ -15,27 +33,25 @@ export const generateStylingAdvice = async (prompt: string): Promise<string> => 
       model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
-        systemInstruction: `Ти професійний асистент стиліста-перукаря. 
-        Твоя мета - надавати кваліфіковані поради щодо стрижок, фарбування та догляду за волоссям.
-        Відповідай українською мовою. Будь ввічливим, креативним та лаконічним.
-        Якщо питають про тренди, називай актуальні тренди 2024-2025 років.`,
+        systemInstruction: SYSTEM_INSTRUCTION,
+        temperature: 0.7, // Баланс між креативністю та точністю
       }
     });
     return response.text || "Вибачте, я не зміг згенерувати відповідь.";
   } catch (error) {
     console.error("Error generating styling advice:", error);
-    throw error;
+    // Повертаємо безпечне повідомлення, щоб не "валити" інтерфейс
+    return "На жаль, AI зараз недоступний. Перевірте з'єднання або спробуйте пізніше.";
   }
 };
 
 export const generateHairstyleImage = async (description: string): Promise<string> => {
   try {
     const ai = getClient();
-    // Using Imagen 3 via genai sdk (assuming configured model map, adhering to prompt guidance for imagen-4.0-generate-001 if available or similar)
-    // The prompt instructions say to use 'imagen-4.0-generate-001' for high quality images.
+    // Використовуємо Imagen 3/4 для високої якості
     const response = await ai.models.generateImages({
       model: 'imagen-4.0-generate-001',
-      prompt: `Professional hairstyle photography, salon quality, ${description}`,
+      prompt: `Professional hair photography, salon lighting, high resolution, 8k, realistic texture. Subject: ${description}. Style: Modern, aesthetic.`,
       config: {
         numberOfImages: 1,
         aspectRatio: '1:1',
@@ -57,14 +73,13 @@ export const generateHairstyleImage = async (description: string): Promise<strin
 export const analyzeClientPhoto = async (base64Image: string, prompt: string): Promise<string> => {
     try {
       const ai = getClient();
-      // Using gemini-2.5-flash for multimodal analysis as it is cost effective and fast.
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: {
             parts: [
                 {
                     inlineData: {
-                        mimeType: 'image/jpeg', // Assuming jpeg for simplicity or derived
+                        mimeType: 'image/jpeg', 
                         data: base64Image
                     }
                 },
@@ -74,7 +89,7 @@ export const analyzeClientPhoto = async (base64Image: string, prompt: string): P
             ]
         },
         config: {
-            systemInstruction: "Ти експерт-стиліст. Проаналізуй фото клієнта та дай пораду."
+            systemInstruction: "Ти експерт-стиліст. Проаналізуй структуру волосся, форму обличчя та кольоротип клієнта на фото."
         }
       });
       return response.text || "Не вдалося проаналізувати фото.";

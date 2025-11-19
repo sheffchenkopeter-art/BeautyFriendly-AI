@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Check, Star, Zap, Crown, Loader2 } from 'lucide-react';
 
+type SubscriptionPlanId = 'start' | 'pro' | 'premium';
+
 interface SubscriptionProps {
-  onSubscribe: (plan: 'start' | 'pro' | 'premium') => void;
+  onSubscribe: (plan: SubscriptionPlanId) => void;
 }
 
 export const Subscription: React.FC<SubscriptionProps> = ({ onSubscribe }) => {
@@ -12,7 +14,8 @@ export const Subscription: React.FC<SubscriptionProps> = ({ onSubscribe }) => {
     setProcessingPlan(planId);
     // Simulate payment processing delay
     setTimeout(() => {
-      onSubscribe(planId as any);
+      // Type assertion here is safe because planId comes from our defined plans
+      onSubscribe(planId as SubscriptionPlanId);
     }, 1500);
   };
 
