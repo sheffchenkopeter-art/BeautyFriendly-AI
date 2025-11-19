@@ -1,0 +1,8 @@
+{
+  "name": "BeautyFriendly AI",
+  "description": "Сучасний веб-додаток для перукарів з AI-помічником для підбору стилю, генерації ідей зачісок та управління клієнтами.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
