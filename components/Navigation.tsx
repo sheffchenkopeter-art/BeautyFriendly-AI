@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Calendar, Users, Sparkles, LayoutDashboard, LogOut, Settings, BarChart3, Scissors } from 'lucide-react';
 import { AppView, User } from '../types';

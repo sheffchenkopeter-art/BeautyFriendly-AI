@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { TrendingUp, TrendingDown, Wallet, CreditCard, X } from 'lucide-react';
 import { WalletState, Transaction, ExpenseCategory, PaymentMethod } from '../types';

@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
 import { Clock, Calendar as CalendarIcon, DollarSign, Sparkles, Send, Loader2, ChevronRight, User, CheckCircle, Wallet, CreditCard, X, Edit2, Phone, Calendar } from 'lucide-react';
 import { Appointment, AppView, Transaction, User as UserType, PaymentMethod, Client } from '../types';
 import { generateStylingAdvice } from '../services/geminiService';
+import { AIAvatar } from '../components/AIAvatar'; // Import custom avatar
 
 interface DashboardProps {
   onChangeView: (view: AppView) => void;
@@ -148,11 +150,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
         {/* 2. AI Agent Widget (Takes up more space) */}
         <div className="lg:col-span-2 bg-gradient-to-br from-surface to-surface-soft p-5 rounded-lg border border-accent/50 shadow-[0_0_15px_rgba(214,185,128,0.1)] relative transition-colors duration-300">
-            <div className="flex items-center gap-2 mb-3">
-                <div className="w-6 h-6 rounded-full bg-accent flex items-center justify-center">
-                    <Sparkles className="w-3 h-3 text-primary" />
+            <div className="flex items-center gap-3 mb-4">
+                {/* Use the new Avatar */}
+                <AIAvatar className="w-10 h-10" />
+                <div>
+                    <h3 className="text-main font-serif italic leading-none">AI Агент</h3>
+                    <p className="text-[10px] text-accent uppercase tracking-wider mt-1">Beauty Intelligence</p>
                 </div>
-                <h3 className="text-main font-serif italic">AI Агент</h3>
             </div>
 
             {!aiResponse ? (

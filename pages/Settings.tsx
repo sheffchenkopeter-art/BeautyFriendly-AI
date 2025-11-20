@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { User, Bell, Shield, CreditCard, ChevronRight, Moon, LogOut, Save, Check, Calendar, Clock, Scissors, Layout } from 'lucide-react';
 import { User as UserType, WorkSchedule, CalendarDailyView, AppTheme } from '../types';
@@ -96,26 +97,49 @@ export const Settings: React.FC<SettingsProps> = ({
                         </div>
 
                         <div className="grid grid-cols-3 gap-4 mb-6">
-                            <button onClick={() => onUpdateTheme('dark')} className={`border rounded p-3 flex flex-col items-center gap-2 transition-all ${theme === 'dark' ? 'border-accent bg-surface-soft' : 'border-border hover:bg-surface-soft'}`}>
-                                <div className="w-full h-12 bg-[#101B2A] rounded border border-[#2a3c52] flex items-center justify-center relative overflow-hidden">
+                            <button onClick={() => onUpdateTheme('dark')} 
+                                className={`relative border rounded-lg p-3 flex flex-col items-center gap-2 transition-all overflow-hidden ${
+                                    theme === 'dark' 
+                                    ? 'border-accent bg-surface-soft ring-1 ring-accent shadow-lg' 
+                                    : 'border-border hover:bg-surface-soft hover:border-muted'
+                                }`}
+                            >
+                                {theme === 'dark' && <div className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full animate-pulse"></div>}
+                                <div className="w-full h-12 bg-[#101B2A] rounded border border-[#2a3c52] flex items-center justify-center relative overflow-hidden shadow-inner">
                                      <div className="absolute top-0 right-0 w-4 h-4 bg-[#D6B980] rounded-bl"></div>
                                     <span className="text-[#D6B980] font-serif text-xs">BF</span>
                                 </div>
-                                <span className={`text-xs font-medium ${theme === 'dark' ? 'text-accent' : 'text-muted'}`}>Dark (Luxury)</span>
+                                <span className={`text-xs font-medium ${theme === 'dark' ? 'text-accent font-bold' : 'text-muted'}`}>Dark</span>
                             </button>
-                            <button onClick={() => onUpdateTheme('light')} className={`border rounded p-3 flex flex-col items-center gap-2 transition-all ${theme === 'light' ? 'border-accent bg-surface-soft' : 'border-border hover:bg-surface-soft'}`}>
-                                <div className="w-full h-12 bg-[#F9F5EC] rounded border border-[#E5E7EB] flex items-center justify-center relative overflow-hidden">
+
+                            <button onClick={() => onUpdateTheme('light')} 
+                                className={`relative border rounded-lg p-3 flex flex-col items-center gap-2 transition-all overflow-hidden ${
+                                    theme === 'light' 
+                                    ? 'border-accent bg-surface-soft ring-1 ring-accent shadow-lg' 
+                                    : 'border-border hover:bg-surface-soft hover:border-muted'
+                                }`}
+                            >
+                                {theme === 'light' && <div className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full animate-pulse"></div>}
+                                <div className="w-full h-12 bg-[#F9F5EC] rounded border border-[#E5E7EB] flex items-center justify-center relative overflow-hidden shadow-inner">
                                      <div className="absolute top-0 right-0 w-4 h-4 bg-[#D6B980] rounded-bl"></div>
                                     <span className="text-[#D6B980] font-serif text-xs">BF</span>
                                 </div>
-                                <span className={`text-xs font-medium ${theme === 'light' ? 'text-accent' : 'text-muted'}`}>Light (Gallery)</span>
+                                <span className={`text-xs font-medium ${theme === 'light' ? 'text-accent font-bold' : 'text-muted'}`}>Light</span>
                             </button>
-                            <button onClick={() => onUpdateTheme('neutral')} className={`border rounded p-3 flex flex-col items-center gap-2 transition-all ${theme === 'neutral' ? 'border-accent bg-surface-soft' : 'border-border hover:bg-surface-soft'}`}>
-                                <div className="w-full h-12 bg-[#0F172A] rounded border border-[#334155] flex items-center justify-center relative overflow-hidden">
+
+                            <button onClick={() => onUpdateTheme('neutral')} 
+                                className={`relative border rounded-lg p-3 flex flex-col items-center gap-2 transition-all overflow-hidden ${
+                                    theme === 'neutral' 
+                                    ? 'border-accent bg-surface-soft ring-1 ring-accent shadow-lg' 
+                                    : 'border-border hover:bg-surface-soft hover:border-muted'
+                                }`}
+                            >
+                                {theme === 'neutral' && <div className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full animate-pulse"></div>}
+                                <div className="w-full h-12 bg-[#0F172A] rounded border border-[#334155] flex items-center justify-center relative overflow-hidden shadow-inner">
                                      <div className="absolute top-0 right-0 w-4 h-4 bg-[#94A3B8] rounded-bl"></div>
                                     <span className="text-[#94A3B8] font-serif text-xs">BF</span>
                                 </div>
-                                <span className={`text-xs font-medium ${theme === 'neutral' ? 'text-accent' : 'text-muted'}`}>Neutral (Studio)</span>
+                                <span className={`text-xs font-medium ${theme === 'neutral' ? 'text-accent font-bold' : 'text-muted'}`}>Neutral</span>
                             </button>
                         </div>
                         

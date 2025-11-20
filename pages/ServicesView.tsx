@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Scissors, Plus, X, Save, Edit2, Trash2, Clock, FolderPlus, Trash, ChevronDown, ChevronUp } from 'lucide-react';
 import { ServiceCategory, ServiceItem } from '../types';
