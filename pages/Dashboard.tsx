@@ -1,20 +1,39 @@
+
 import React, { useState } from 'react';
-import { Clock, Calendar as CalendarIcon, DollarSign, Sparkles, Send, Loader2, ChevronRight } from 'lucide-react';
-import { Appointment, AppView, Transaction, User } from '../types';
+import { Clock, Calendar as CalendarIcon, DollarSign, Sparkles, Send, Loader2, ChevronRight, User, CheckCircle, Wallet, CreditCard, X, Edit2, Phone, Calendar } from 'lucide-react';
+import { Appointment, AppView, Transaction, User as UserType, PaymentMethod, Client } from '../types';
 import { generateStylingAdvice } from '../services/geminiService';
 
 interface DashboardProps {
   onChangeView: (view: AppView) => void;
   appointments: Appointment[];
   transactions: Transaction[];
-  user: User;
+  user: UserType;
+  clients: Client[];
+  onCloseAppointment: (id: string, method: PaymentMethod, finalPrice: number) => void;
+  onRescheduleAppointment: (id: string, newDate: Date, duration: number) => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onChangeView, appointments, transactions, user }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ 
+    onChangeView, appointments, transactions, user, clients,
+    onCloseAppointment, onRescheduleAppointment
+}) => {
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiResponse, setAiResponse] = useState('');
   const [isAiLoading, setIsAiLoading] = useState(false);
   
+  // Action Modals State
+  const [selectedApp, setSelectedApp] = useState<Appointment | null>(null);
+  const [modalType, setModalType] = useState<'none' | 'checkout' | 'reschedule' | 'client'>('none');
+  
+  // Checkout State
+  const [checkoutPrice, setCheckoutPrice] = useState('');
+  
+  // Reschedule State
+  const [rescheduleDate, setRescheduleDate] = useState('');
+  const [rescheduleTime, setRescheduleTime] = useState('');
+  const [rescheduleDuration, setRescheduleDuration] = useState('');
+
   const today = new Date();
   
   // Filter appointments for today
@@ -48,6 +67,49 @@ export const Dashboard: React.FC<DashboardProps> = ({ onChangeView, appointments
       } finally {
           setIsAiLoading(false);
       }
+  };
+
+  // Modal Handlers
+  const openCheckout = (app: Appointment) => {
+      setSelectedApp(app);
+      setCheckoutPrice(app.price.toString());
+      setModalType('checkout');
+  };
+
+  const openReschedule = (app: Appointment) => {
+      setSelectedApp(app);
+      setRescheduleDate(app.date.toISOString().split('T')[0]);
+      setRescheduleTime(app.date.toTimeString().slice(0, 5));
+      setRescheduleDuration(app.durationMinutes.toString());
+      setModalType('reschedule');
+  };
+
+  const openClientProfile = (app: Appointment) => {
+      setSelectedApp(app);
+      setModalType('client');
+  };
+
+  const handleCheckoutSubmit = (method: PaymentMethod) => {
+      if (selectedApp && checkoutPrice) {
+          onCloseAppointment(selectedApp.id, method, parseFloat(checkoutPrice));
+          setModalType('none');
+          setSelectedApp(null);
+      }
+  };
+
+  const handleRescheduleSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      if (selectedApp && rescheduleDate && rescheduleTime) {
+          const newDate = new Date(`${rescheduleDate}T${rescheduleTime}`);
+          onRescheduleAppointment(selectedApp.id, newDate, parseInt(rescheduleDuration));
+          setModalType('none');
+          setSelectedApp(null);
+      }
+  };
+
+  // Helper to find client data
+  const getClientData = (app: Appointment) => {
+      return clients.find(c => c.id === app.clientId);
   };
 
   return (
@@ -151,21 +213,48 @@ export const Dashboard: React.FC<DashboardProps> = ({ onChangeView, appointments
              <div className="bg-[#1a2736] rounded-lg border border-[#2a3c52] p-4 space-y-3 min-h-[200px]">
                 {todayAppointments.length > 0 ? (
                     todayAppointments.map(app => (
-                        <div key={app.id} className="flex items-center gap-4 p-3 bg-[#101b2a] rounded border border-[#2a3c52] hover:border-[#d6b980]/30 transition-colors group">
-                             <div className={`w-1 h-10 rounded-full ${app.status === 'completed' ? 'bg-green-500' : 'bg-[#d6b980]'}`}></div>
-                             <div className="flex flex-col items-center min-w-[50px]">
-                                 <span className="text-white font-serif text-base">{app.date.toLocaleTimeString('uk-UA', {hour: '2-digit', minute:'2-digit'})}</span>
+                        <div key={app.id} className="flex flex-col md:flex-row items-start md:items-center gap-4 p-3 bg-[#101b2a] rounded border border-[#2a3c52] hover:border-[#d6b980]/30 transition-colors group">
+                             <div className="flex items-center gap-4 w-full md:w-auto flex-1">
+                                <div className={`w-1 h-10 rounded-full ${app.status === 'completed' ? 'bg-green-500' : 'bg-[#d6b980]'}`}></div>
+                                <div className="flex flex-col items-center min-w-[50px]">
+                                    <span className="text-white font-serif text-base">{app.date.toLocaleTimeString('uk-UA', {hour: '2-digit', minute:'2-digit'})}</span>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-white font-medium text-sm">{app.clientName}</p>
+                                    <p className="text-slate-500 text-xs">{app.service}</p>
+                                </div>
                              </div>
-                             <div className="flex-1">
-                                 <p className="text-white font-medium text-sm">{app.clientName}</p>
-                                 <p className="text-slate-500 text-xs">{app.service}</p>
-                             </div>
-                             <div>
-                                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
-                                     app.status === 'completed' ? 'border-green-500/30 text-green-400 bg-green-900/20' : 'border-[#2a3c52] text-slate-400'
-                                 }`}>
-                                     {app.status === 'completed' ? 'Ок' : '...'}
-                                 </span>
+                             
+                             {/* Action Buttons */}
+                             <div className="flex items-center gap-2 w-full md:w-auto justify-end border-t md:border-t-0 border-[#2a3c52] pt-2 md:pt-0">
+                                {app.status === 'scheduled' ? (
+                                    <>
+                                        <button 
+                                            onClick={() => openClientProfile(app)}
+                                            className="p-2 bg-[#2a3c52] rounded text-slate-300 hover:text-[#d6b980] transition-colors"
+                                            title="Картка клієнта"
+                                        >
+                                            <User className="w-4 h-4" />
+                                        </button>
+                                        <button 
+                                            onClick={() => openReschedule(app)}
+                                            className="p-2 bg-[#2a3c52] rounded text-slate-300 hover:text-white transition-colors"
+                                            title="Перенести"
+                                        >
+                                            <Clock className="w-4 h-4" />
+                                        </button>
+                                        <button 
+                                            onClick={() => openCheckout(app)}
+                                            className="p-2 bg-[#d6b980] text-[#101b2a] rounded font-bold flex items-center gap-2 hover:bg-[#c2a56a] transition-colors text-xs uppercase tracking-wider px-4"
+                                        >
+                                            <CheckCircle className="w-4 h-4" /> <span>Оплата</span>
+                                        </button>
+                                    </>
+                                ) : (
+                                    <span className="text-xs text-green-500 font-bold uppercase tracking-wider flex items-center gap-1 px-3 py-1 bg-green-900/20 rounded border border-green-900/50">
+                                        <CheckCircle className="w-3 h-3" /> Оплачено
+                                    </span>
+                                )}
                              </div>
                         </div>
                     ))
@@ -178,6 +267,94 @@ export const Dashboard: React.FC<DashboardProps> = ({ onChangeView, appointments
              </div>
         </section>
       </div>
+
+      {/* --- MODALS --- */}
+
+      {/* 1. Checkout Modal */}
+      {modalType === 'checkout' && selectedApp && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#0d1623]/90 backdrop-blur-sm animate-in fade-in">
+            <div className="bg-[#1a2736] w-full max-w-sm rounded-lg border border-[#d6b980] shadow-2xl p-6 relative">
+                 <button onClick={() => setModalType('none')} className="absolute right-4 top-4 text-slate-500 hover:text-white"><X className="w-5 h-5"/></button>
+                 <div className="text-center mb-6">
+                     <div className="w-16 h-16 rounded-full bg-[#d6b980]/10 flex items-center justify-center mx-auto mb-4 border border-[#d6b980]">
+                         <CheckCircle className="w-8 h-8 text-[#d6b980]" />
+                     </div>
+                     <h3 className="text-xl font-serif text-white mb-1">Завершення візиту</h3>
+                     <p className="text-slate-400 text-sm">{selectedApp.clientName}</p>
+                 </div>
+
+                 <div className="bg-[#101b2a] p-4 rounded border border-[#2a3c52] mb-6 text-center relative group">
+                     <div className="absolute right-2 top-2 text-slate-500"><Edit2 className="w-3 h-3" /></div>
+                     <span className="text-xs uppercase tracking-widest text-slate-500 block mb-1">До сплати (₴)</span>
+                     <input 
+                        type="number"
+                        value={checkoutPrice}
+                        onChange={(e) => setCheckoutPrice(e.target.value)}
+                        className="w-full bg-transparent text-3xl font-serif text-white text-center focus:outline-none border-b border-[#d6b980]/30 focus:border-[#d6b980] pb-1 transition-colors"
+                     />
+                 </div>
+
+                 <div className="space-y-3">
+                     <button onClick={() => handleCheckoutSubmit('cash')} className="w-full py-3 border border-[#2a3c52] hover:border-[#d6b980] hover:bg-[#101b2a] rounded flex items-center justify-center gap-3 text-white transition-all"><Wallet className="w-5 h-5 text-slate-400" /> Готівка</button>
+                     <button onClick={() => handleCheckoutSubmit('card')} className="w-full py-3 border border-[#2a3c52] hover:border-[#d6b980] hover:bg-[#101b2a] rounded flex items-center justify-center gap-3 text-white transition-all"><CreditCard className="w-5 h-5 text-slate-400" /> Картка</button>
+                 </div>
+            </div>
+        </div>
+      )}
+
+      {/* 2. Reschedule Modal */}
+      {modalType === 'reschedule' && selectedApp && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#0d1623]/90 backdrop-blur-sm animate-in fade-in">
+              <div className="bg-[#1a2736] w-full max-w-md rounded-lg border border-[#d6b980] shadow-2xl p-6 relative">
+                <div className="flex justify-between items-center mb-6"><h3 className="text-xl font-serif text-white">Перенесення візиту</h3><button onClick={() => setModalType('none')} className="text-slate-400 hover:text-white"><X className="w-5 h-5" /></button></div>
+                <form onSubmit={handleRescheduleSubmit} className="space-y-4">
+                    <p className="text-sm text-slate-300 bg-[#101b2a] p-3 rounded border border-[#2a3c52]">Клієнт: <span className="text-white font-medium">{selectedApp.clientName}</span></p>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2"><label className="text-xs font-medium text-[#d6b980] uppercase tracking-wide">Нова Дата</label><input type="date" value={rescheduleDate} onChange={(e) => setRescheduleDate(e.target.value)} className="w-full bg-[#101b2a] border border-[#2a3c52] rounded px-4 py-3 text-white focus:border-[#d6b980] focus:outline-none [color-scheme:dark]" /></div>
+                        <div className="space-y-2"><label className="text-xs font-medium text-[#d6b980] uppercase tracking-wide">Новий Час</label><input type="time" value={rescheduleTime} onChange={(e) => setRescheduleTime(e.target.value)} className="w-full bg-[#101b2a] border border-[#2a3c52] rounded px-4 py-3 text-white focus:border-[#d6b980] focus:outline-none [color-scheme:dark]" /></div>
+                    </div>
+                    <button type="submit" className="w-full bg-[#d6b980] text-[#101b2a] py-3 rounded text-sm font-bold uppercase tracking-widest hover:bg-[#c2a56a] mt-2">Зберегти зміни</button>
+                </form>
+              </div>
+          </div>
+      )}
+
+      {/* 3. Client Info Modal */}
+      {modalType === 'client' && selectedApp && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#0d1623]/90 backdrop-blur-sm animate-in fade-in">
+              <div className="bg-[#1a2736] w-full max-w-sm rounded-lg border border-[#d6b980] shadow-2xl p-6 relative">
+                 <button onClick={() => setModalType('none')} className="absolute right-4 top-4 text-slate-500 hover:text-white"><X className="w-5 h-5"/></button>
+                 <div className="text-center mb-6">
+                     <div className="w-20 h-20 mx-auto rounded-full overflow-hidden border-2 border-[#d6b980] mb-3">
+                         {/* Mock avatar based on name if client not found, purely visual */}
+                         <img src={`https://ui-avatars.com/api/?name=${selectedApp.clientName}&background=d6b980&color=101b2a`} alt="Client" className="w-full h-full object-cover" />
+                     </div>
+                     <h3 className="text-xl font-serif text-white">{selectedApp.clientName}</h3>
+                     <p className="text-slate-400 text-sm">{getClientData(selectedApp)?.phone || 'Телефон не вказано'}</p>
+                 </div>
+                 
+                 <div className="bg-[#101b2a] p-4 rounded border border-[#2a3c52] mb-4">
+                     <div className="flex items-center gap-2 text-[#d6b980] text-xs uppercase font-bold mb-2">
+                         <Calendar className="w-3 h-3" /> Останній візит
+                     </div>
+                     <p className="text-white text-sm">{getClientData(selectedApp)?.lastVisit || 'Інформація відсутня'}</p>
+                 </div>
+
+                 <div className="bg-[#101b2a] p-4 rounded border border-[#2a3c52]">
+                     <span className="text-[#d6b980] text-xs uppercase font-bold block mb-2">Нотатки</span>
+                     <p className="text-slate-300 text-sm italic">
+                         {getClientData(selectedApp)?.notes || "Немає нотаток."}
+                     </p>
+                 </div>
+
+                 <div className="mt-6 flex gap-2">
+                     <a href={`tel:${getClientData(selectedApp)?.phone}`} className="flex-1 bg-[#2a3c52] text-white py-2 rounded flex items-center justify-center gap-2 hover:bg-[#354a61] transition-colors">
+                         <Phone className="w-4 h-4" /> Подзвонити
+                     </a>
+                 </div>
+              </div>
+          </div>
+      )}
     </div>
   );
 };

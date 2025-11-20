@@ -187,7 +187,10 @@ function App() {
                   onChangeView={setCurrentView} 
                   appointments={appointments}
                   transactions={transactions}
+                  clients={clients} // Passed clients
                   user={user}
+                  onCloseAppointment={handleCloseAppointment} // Passed handler
+                  onRescheduleAppointment={handleRescheduleAppointment} // Passed handler
                />;
       case AppView.CALENDAR:
         return <CalendarView 
@@ -239,7 +242,10 @@ function App() {
                   onChangeView={setCurrentView} 
                   appointments={appointments} 
                   transactions={transactions}
+                  clients={clients}
                   user={user}
+                  onCloseAppointment={handleCloseAppointment}
+                  onRescheduleAppointment={handleRescheduleAppointment}
                />;
     }
   };
