@@ -1,14 +1,16 @@
+
 import { GoogleGenAI } from "@google/genai";
 
 // Helper to safely get API Key without crashing the browser if process is undefined
 const getApiKey = (): string | undefined => {
   try {
-    // Check if process exists and has env (Node.js / Webpack / some Vite configs)
-    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+    // Safe check for process.env in various bundler environments
+    // This prevents "ReferenceError: process is not defined"
+    if (typeof process !== 'undefined' && process && process.env && process.env.API_KEY) {
       return process.env.API_KEY;
     }
   } catch (e) {
-    // Ignore reference errors
+    console.warn("Error accessing process.env:", e);
   }
   return undefined;
 };
@@ -18,7 +20,7 @@ const getClient = () => {
   
   if (!apiKey) {
     console.error("CRITICAL: API Key is missing. The app cannot contact Gemini.");
-    throw new Error("API Key not found. Please check your environment variables.");
+    throw new Error("API Key not found. Please check your environment variables or .env file.");
   }
   
   return new GoogleGenAI({ apiKey });
@@ -52,7 +54,7 @@ export const generateStylingAdvice = async (prompt: string): Promise<string> => 
     return response.text || "Вибачте, я не зміг згенерувати відповідь.";
   } catch (error) {
     console.error("Gemini API Error (Text):", error);
-    return "На жаль, AI зараз недоступний. Перевірте API ключ в консолі або спробуйте пізніше.";
+    return "На жаль, AI зараз недоступний. Перевірте налаштування ключа API.";
   }
 };
 

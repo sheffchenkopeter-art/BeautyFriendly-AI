@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Calendar, Users, Sparkles, LayoutDashboard, LogOut, Settings } from 'lucide-react';
+import { Calendar, Users, Sparkles, LayoutDashboard, LogOut, Settings, BarChart3 } from 'lucide-react';
 import { AppView, User } from '../types';
 
 interface NavigationProps {
@@ -15,6 +16,7 @@ export const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChang
     { id: AppView.CALENDAR, icon: Calendar, label: 'Календар' },
     { id: AppView.AI_STYLIST, icon: Sparkles, label: 'AI Стиліст' },
     { id: AppView.CLIENTS, icon: Users, label: 'Клієнти' },
+    { id: AppView.ANALYTICS, icon: BarChart3, label: 'Аналітика' },
     { id: AppView.SETTINGS, icon: Settings, label: 'Налаштування' },
   ];
 
@@ -72,7 +74,7 @@ export const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChang
 
       {/* Mobile Bottom Bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0d1623] border-t border-[#1e2d3d] px-6 py-3 flex justify-between items-center z-50 safe-area-pb">
-        {navItems.slice(0, 4).map((item) => (
+        {navItems.slice(0, 5).map((item) => (
           <button
             key={item.id}
             onClick={() => onViewChange(item.id)}

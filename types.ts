@@ -1,9 +1,11 @@
+
 // Enums
 export enum AppView {
   DASHBOARD = 'DASHBOARD',
   CALENDAR = 'CALENDAR',
   CLIENTS = 'CLIENTS',
   AI_STYLIST = 'AI_STYLIST',
+  ANALYTICS = 'ANALYTICS',
   SETTINGS = 'SETTINGS',
 }
 
@@ -12,6 +14,18 @@ export enum ServiceType {
   COLORING = 'Фарбування',
   STYLING = 'Укладка',
   TREATMENT = 'Лікування',
+}
+
+export type PaymentMethod = 'cash' | 'card';
+export type TransactionType = 'income' | 'expense';
+
+export enum ExpenseCategory {
+  RENT = 'Оренда',
+  MATERIALS = 'Матеріали',
+  TAXES = 'Податки',
+  SALARY = 'Зарплата',
+  OTHER = 'Інше',
+  SERVICE = 'Послуга' // Automatic category for appointments
 }
 
 // Interfaces
@@ -44,6 +58,22 @@ export interface Appointment {
   durationMinutes: number;
   price: number;
   status: 'scheduled' | 'completed' | 'cancelled';
+  paymentMethod?: PaymentMethod; // Track how it was paid
+}
+
+export interface Transaction {
+  id: string;
+  date: Date;
+  amount: number;
+  type: TransactionType;
+  category: ExpenseCategory | string;
+  description?: string;
+  paymentMethod: PaymentMethod;
+}
+
+export interface WalletState {
+  cash: number;
+  card: number;
 }
 
 export interface ChatMessage {

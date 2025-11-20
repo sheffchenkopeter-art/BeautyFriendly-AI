@@ -5,22 +5,26 @@ import {
   addWeeks, subWeeks, subDays, getDay
 } from 'date-fns';
 import { uk } from 'date-fns/locale';
-import { Scissors, Plus, X, Save, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, LayoutList, Grid, Columns, AlertCircle } from 'lucide-react';
-import { Appointment, Client, ServiceType, WorkSchedule } from '../types';
+import { Scissors, Plus, X, Save, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, LayoutList, Grid, Columns, AlertCircle, CheckCircle, CreditCard, Wallet } from 'lucide-react';
+import { Appointment, Client, ServiceType, WorkSchedule, PaymentMethod } from '../types';
 
 interface CalendarViewProps {
     appointments: Appointment[];
     clients: Client[];
     onAddAppointment: (appointment: Appointment) => void;
     workSchedule: WorkSchedule;
+    onCloseAppointment: (id: string, method: PaymentMethod) => void;
 }
 
 type ViewMode = 'day' | 'week' | 'month';
 
-export const CalendarView: React.FC<CalendarViewProps> = ({ appointments, clients, onAddAppointment, workSchedule }) => {
+export const CalendarView: React.FC<CalendarViewProps> = ({ appointments, clients, onAddAppointment, workSchedule, onCloseAppointment }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<ViewMode>('day');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Checkout Modal State
+  const [checkoutApp, setCheckoutApp] = useState<Appointment | null>(null);
 
   // Form State
   const [formClientId, setFormClientId] = useState('');
@@ -86,6 +90,13 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ appointments, client
       setFormClientId('');
       setFormTime('10:00');
   };
+
+  const handleCheckout = (method: PaymentMethod) => {
+      if (checkoutApp) {
+          onCloseAppointment(checkoutApp.id, method);
+          setCheckoutApp(null);
+      }
+  }
 
   // Check if selected form date/time is valid against schedule
   const isFormTimeValid = () => {
@@ -181,7 +192,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ appointments, client
              <div className="divide-y divide-[#2a3c52]">
                 {dayAppointments.length > 0 ? (
                     dayAppointments.map(app => (
-                        <div key={app.id} className="flex p-6 hover:bg-[#2a3c52]/30 transition-colors group">
+                        <div key={app.id} className={`flex p-6 transition-colors group relative ${app.status === 'completed' ? 'bg-[#101b2a]/50 opacity-70' : 'hover:bg-[#2a3c52]/30'}`}>
                             <div className="w-24 flex-shrink-0 flex flex-col items-center pt-1 border-r border-[#2a3c52] pr-6 mr-6">
                                 <span className="text-2xl font-serif text-white">
                                     {format(app.date, 'HH:mm')}
@@ -194,16 +205,35 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ appointments, client
                                 <div className="flex justify-between items-start mb-2">
                                     <h4 className="font-serif text-xl text-white flex items-center gap-2">
                                         {app.clientName}
+                                        {app.status === 'completed' && <CheckCircle className="w-4 h-4 text-green-500" />}
                                     </h4>
-                                    <span className="text-xs font-bold text-[#d6b980] border border-[#d6b980]/30 px-3 py-1 rounded-full">
-                                        ₴{app.price}
-                                    </span>
+                                    <div className="flex items-center gap-3">
+                                        <span className={`text-xs font-bold px-3 py-1 rounded-full border ${
+                                            app.status === 'completed' ? 'border-green-500/30 text-green-500' : 'border-[#d6b980]/30 text-[#d6b980]'
+                                        }`}>
+                                            ₴{app.price}
+                                        </span>
+                                        {app.status === 'scheduled' && (
+                                            <button 
+                                                onClick={() => setCheckoutApp(app)}
+                                                className="bg-[#d6b980] text-[#101b2a] px-3 py-1 text-xs font-bold uppercase tracking-widest rounded hover:bg-[#c2a56a] transition-colors"
+                                            >
+                                                Розрахувати
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className="flex items-center gap-4 mt-2">
                                     <span className="text-sm text-slate-300 flex items-center gap-2 bg-[#101b2a] px-3 py-1 rounded border border-[#2a3c52]">
                                         <Scissors className="w-3 h-3 text-[#d6b980]" />
                                         {app.service}
                                     </span>
+                                    {app.paymentMethod && (
+                                        <span className="text-xs text-slate-500 uppercase flex items-center gap-1">
+                                            {app.paymentMethod === 'cash' ? <Wallet className="w-3 h-3" /> : <CreditCard className="w-3 h-3" />}
+                                            {app.paymentMethod === 'cash' ? 'Готівка' : 'Картка'}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -250,9 +280,18 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ appointments, client
                         </div>
                         <div className="p-2 space-y-2 flex-1 overflow-y-auto max-h-[600px] scrollbar-thin">
                             {dayApps.map(app => (
-                                <div key={app.id} className="bg-[#101b2a] p-2 rounded border border-[#2a3c52] text-xs hover:border-[#d6b980] transition-colors cursor-pointer group relative z-20">
+                                <div 
+                                    key={app.id} 
+                                    onClick={() => app.status === 'scheduled' && setCheckoutApp(app)}
+                                    className={`p-2 rounded border text-xs transition-colors cursor-pointer group relative z-20 ${
+                                        app.status === 'completed' 
+                                        ? 'bg-[#101b2a] border-green-900/50 opacity-60' 
+                                        : 'bg-[#101b2a] border-[#2a3c52] hover:border-[#d6b980]'
+                                    }`}
+                                >
                                     <div className="flex justify-between items-center mb-1">
                                         <span className="text-[#d6b980] font-medium">{format(app.date, 'HH:mm')}</span>
+                                        {app.status === 'completed' && <CheckCircle className="w-3 h-3 text-green-500" />}
                                     </div>
                                     <p className="text-white font-medium truncate">{app.clientName}</p>
                                     <p className="text-slate-500 truncate text-[10px]">{app.service}</p>
@@ -314,7 +353,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ appointments, client
 
                             <div className="mt-6 space-y-1">
                                 {dayApps.slice(0, 3).map((app, i) => (
-                                    <div key={i} className="h-1.5 w-full rounded-full bg-[#d6b980]" title={`${app.clientName} - ${format(app.date, 'HH:mm')}`}></div>
+                                    <div key={i} className={`h-1.5 w-full rounded-full ${app.status === 'completed' ? 'bg-green-500' : 'bg-[#d6b980]'}`} title={`${app.clientName} - ${format(app.date, 'HH:mm')}`}></div>
                                 ))}
                                 {dayApps.length > 3 && (
                                     <div className="text-[10px] text-slate-500 text-center">+{dayApps.length - 3}</div>
@@ -449,6 +488,51 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ appointments, client
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+      )}
+
+      {/* Checkout Modal */}
+      {checkoutApp && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#0d1623]/90 backdrop-blur-sm">
+            <div className="bg-[#1a2736] w-full max-w-sm rounded-lg border border-[#d6b980] shadow-2xl p-6 animate-in zoom-in-95 duration-200">
+                 <div className="text-center mb-6">
+                     <div className="w-16 h-16 rounded-full bg-[#d6b980]/10 flex items-center justify-center mx-auto mb-4 border border-[#d6b980]">
+                         <CheckCircle className="w-8 h-8 text-[#d6b980]" />
+                     </div>
+                     <h3 className="text-xl font-serif text-white mb-1">Завершення візиту</h3>
+                     <p className="text-slate-400 text-sm">{checkoutApp.clientName} — {checkoutApp.service}</p>
+                 </div>
+
+                 <div className="bg-[#101b2a] p-4 rounded border border-[#2a3c52] mb-6 text-center">
+                     <span className="text-xs uppercase tracking-widest text-slate-500 block mb-1">До сплати</span>
+                     <span className="text-3xl font-serif text-white">₴{checkoutApp.price}</span>
+                 </div>
+
+                 <div className="space-y-3">
+                     <p className="text-xs uppercase tracking-widest text-[#d6b980] text-center mb-2">Оберіть метод оплати</p>
+                     <button 
+                        onClick={() => handleCheckout('cash')}
+                        className="w-full py-3 border border-[#2a3c52] hover:border-[#d6b980] hover:bg-[#101b2a] rounded flex items-center justify-center gap-3 text-white transition-all group"
+                     >
+                         <Wallet className="w-5 h-5 text-slate-400 group-hover:text-[#d6b980]" />
+                         Готівка
+                     </button>
+                     <button 
+                        onClick={() => handleCheckout('card')}
+                        className="w-full py-3 border border-[#2a3c52] hover:border-[#d6b980] hover:bg-[#101b2a] rounded flex items-center justify-center gap-3 text-white transition-all group"
+                     >
+                         <CreditCard className="w-5 h-5 text-slate-400 group-hover:text-[#d6b980]" />
+                         Картка (Термінал)
+                     </button>
+                 </div>
+
+                 <button 
+                    onClick={() => setCheckoutApp(null)}
+                    className="mt-6 w-full text-xs text-slate-500 hover:text-white py-2"
+                 >
+                     Скасувати
+                 </button>
             </div>
         </div>
       )}

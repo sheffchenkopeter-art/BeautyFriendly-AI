@@ -1,4 +1,10 @@
-import { Client, Appointment, ServiceType, StyleTrend, WorkSchedule } from './types';
+
+import { Client, Appointment, ServiceType, StyleTrend, WorkSchedule, WalletState } from './types';
+
+export const INITIAL_WALLET_STATE: WalletState = {
+  cash: 0, 
+  card: 0 
+};
 
 export const MOCK_CLIENTS: Client[] = [
   {
@@ -7,7 +13,7 @@ export const MOCK_CLIENTS: Client[] = [
     phone: '+380 50 123 4567',
     notes: 'Любить холодний блонд, чутлива шкіра голови.',
     lastVisit: '2023-10-15',
-    avatarUrl: 'https://picsum.photos/id/64/200/200'
+    avatarUrl: 'https://ui-avatars.com/api/?name=Олена+Коваль&background=d6b980&color=101b2a'
   },
   {
     id: '2',
@@ -15,7 +21,7 @@ export const MOCK_CLIENTS: Client[] = [
     phone: '+380 67 987 6543',
     notes: 'Відрощує довжину, тільки кінчики.',
     lastVisit: '2023-11-02',
-    avatarUrl: 'https://picsum.photos/id/65/200/200'
+    avatarUrl: 'https://ui-avatars.com/api/?name=Марина+Петренко&background=1a2736&color=d6b980'
   },
   {
     id: '3',
@@ -23,7 +29,7 @@ export const MOCK_CLIENTS: Client[] = [
     phone: '+380 93 555 1212',
     notes: 'Класичний фейд, щомісяця.',
     lastVisit: '2023-11-20',
-    avatarUrl: 'https://picsum.photos/id/91/200/200'
+    avatarUrl: 'https://ui-avatars.com/api/?name=Андрій+Мельник&background=2a3c52&color=white'
   }
 ];
 
