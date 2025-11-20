@@ -4,15 +4,11 @@ import { ClientProfile } from "../types";
 // Helper to safely get API Key without crashing the browser
 const getApiKey = (): string | undefined => {
   try {
-    // Vite replace 'process.env.API_KEY' with the actual string during build.
-    // We check typeof process to avoid ReferenceError in environments where it's not defined.
     if (typeof process !== 'undefined' && process.env) {
       return process.env.API_KEY;
     }
-    // Fallback: sometimes the bundler replaces the whole expression
     return process.env.API_KEY;
   } catch (e) {
-    // console.warn("Environment variable access issue:", e);
     return undefined;
   }
 };
@@ -65,25 +61,38 @@ export const generateStylingAdvice = async (prompt: string): Promise<string> => 
 export const generateHairstyleImage = async (description: string): Promise<string> => {
   try {
     const ai = getClient();
-    // Using gemini-2.5-flash-image for better availability/performance
-    const response = await ai.models.generateImages({
-      model: 'imagen-3.0-generate-001',
-      prompt: `Professional hair photography, salon lighting, high resolution, 8k, realistic texture. Subject: ${description}. Style: Modern, aesthetic.`,
+    
+    // Updated to use gemini-2.5-flash-image via generateContent
+    // This allows generation using the standard model which might be more accessible
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-image',
+      contents: {
+        parts: [
+          {
+            text: `Generate a photorealistic, high-quality hair photography image. 8k resolution, salon lighting. Subject: ${description}. Style: Modern, aesthetic.`,
+          },
+        ],
+      },
       config: {
-        numberOfImages: 1,
-        aspectRatio: '1:1',
-        outputMimeType: 'image/jpeg'
+        // Explicitly requesting image generation features if needed, 
+        // but for flash-image the model implies it.
       }
     });
 
-    const base64ImageBytes = response.generatedImages?.[0]?.image?.imageBytes;
-    if (base64ImageBytes) {
-      return `data:image/jpeg;base64,${base64ImageBytes}`;
+    // Iterate through parts to find the image
+    if (response.candidates?.[0]?.content?.parts) {
+      for (const part of response.candidates[0].content.parts) {
+        if (part.inlineData) {
+          const base64EncodeString = part.inlineData.data;
+          return `data:image/png;base64,${base64EncodeString}`;
+        }
+      }
     }
+
     throw new Error("No image generated in response");
   } catch (error) {
     console.error("Gemini API Error (Image):", error);
-    throw error;
+    throw new Error("Не вдалося створити зображення. Можливо, ваш API ключ не підтримує генерацію картинок (потрібен платний акаунт Google Cloud).");
   }
 };
 
@@ -91,7 +100,6 @@ export const generateHairstyleImage = async (description: string): Promise<strin
 export const analyzeClientPhoto = async (base64Image: string, prompt: string): Promise<string> => {
     try {
       const ai = getClient();
-      // Remove header if present (data:image/jpeg;base64,) to get raw bytes
       const cleanBase64 = base64Image.split(',')[1] || base64Image;
 
       const response = await ai.models.generateContent({
