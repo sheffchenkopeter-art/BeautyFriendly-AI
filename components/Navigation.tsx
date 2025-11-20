@@ -75,25 +75,30 @@ export const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChang
       </div>
 
       {/* Mobile Bottom Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0d1623] border-t border-[#1e2d3d] px-6 py-3 flex justify-between items-center z-50 safe-area-pb">
+      <div 
+        className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0d1623] border-t border-[#1e2d3d] px-6 pt-4 flex justify-between items-center z-50 shadow-[0_-5px_20px_rgba(0,0,0,0.3)]"
+        // Adding extra padding bottom to lift icons above the safe area swipe indicator
+        style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}
+      >
         {navItems.slice(0, 5).map((item) => (
           <button
             key={item.id}
             onClick={() => onViewChange(item.id)}
-            className={`flex flex-col items-center gap-1.5 ${
+            className={`flex flex-col items-center gap-1 transition-transform active:scale-95 ${
               currentView === item.id ? 'text-[#d6b980]' : 'text-slate-500'
             }`}
           >
-            <item.icon className="w-5 h-5" />
+            {/* Increased icon size from w-5 h-5 to w-7 h-7 for better touch targets */}
+            <item.icon className="w-7 h-7 stroke-[1.5]" />
           </button>
         ))}
          <button
             onClick={() => onViewChange(AppView.SETTINGS)}
-            className={`flex flex-col items-center gap-1.5 ${
+            className={`flex flex-col items-center gap-1 transition-transform active:scale-95 ${
               currentView === AppView.SETTINGS ? 'text-[#d6b980]' : 'text-slate-500'
             }`}
           >
-            <Settings className="w-5 h-5" />
+            <Settings className="w-7 h-7 stroke-[1.5]" />
           </button>
       </div>
     </>
