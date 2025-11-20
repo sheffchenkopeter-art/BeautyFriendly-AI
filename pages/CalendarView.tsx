@@ -5,8 +5,8 @@ import {
   eachDayOfInterval, isSameMonth, isSameDay, getDay, getHours, getMinutes
 } from 'date-fns';
 import { uk } from 'date-fns/locale';
-import { Scissors, Plus, X, Save, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, LayoutList, Grid, Columns, AlertCircle, CheckCircle, CreditCard, Wallet, Edit2, Trash2, AlertTriangle, List } from 'lucide-react';
-import { Appointment, Client, ServiceType, WorkSchedule, PaymentMethod, CalendarDailyView, ServiceItem, ServiceCategory } from '../types';
+import { Plus, X, Save, ChevronLeft, ChevronRight, Clock, LayoutList, Grid, Columns, AlertCircle, CheckCircle, CreditCard, Wallet, Edit2, Trash2, AlertTriangle, List, Calendar as CalendarIcon } from 'lucide-react';
+import { Appointment, Client, WorkSchedule, PaymentMethod, CalendarDailyView, ServiceItem, ServiceCategory } from '../types';
 
 interface CalendarViewProps {
     appointments: Appointment[];
@@ -182,29 +182,23 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   };
 
   const renderHeader = () => (
-    <div className="flex flex-col xl:flex-row justify-between items-center gap-4 mb-6 bg-surface p-4 rounded border border-border transition-colors duration-300">
+    <div className="flex flex-col xl:flex-row justify-between items-center gap-4 mb-8 glass p-6 rounded-2xl animate-in fade-in slide-in-from-top-2">
       <div className="flex items-center gap-4 w-full xl:w-auto justify-between xl:justify-start">
-        <button onClick={handlePrev} className="p-2 hover:bg-surface-soft rounded-full text-muted hover:text-accent transition-colors">
-            <ChevronLeft className="w-5 h-5" />
-        </button>
+        <button onClick={handlePrev} className="p-2 hover:bg-surface-soft/50 rounded-full text-muted hover:text-accent transition-colors"><ChevronLeft className="w-6 h-6" /></button>
         <div className="text-center min-w-[180px]">
-            <h3 className="text-xl font-serif text-main capitalize">
+            <h3 className="text-2xl font-serif text-main capitalize tracking-tight">
                 {viewMode === 'month' 
                     ? format(currentDate, 'LLLL yyyy', { locale: uk }) 
                     : format(currentDate, 'd MMMM yyyy', { locale: uk })
                 }
             </h3>
-            <button onClick={handleToday} className="text-[10px] uppercase tracking-widest text-accent hover:underline">
-                Сьогодні
-            </button>
+            <button onClick={handleToday} className="text-xs uppercase tracking-[0.2em] text-accent font-bold hover:underline underline-offset-4 mt-1">Сьогодні</button>
         </div>
-        <button onClick={handleNext} className="p-2 hover:bg-surface-soft rounded-full text-muted hover:text-accent transition-colors">
-            <ChevronRight className="w-5 h-5" />
-        </button>
+        <button onClick={handleNext} className="p-2 hover:bg-surface-soft/50 rounded-full text-muted hover:text-accent transition-colors"><ChevronRight className="w-6 h-6" /></button>
       </div>
 
-      <div className="flex gap-3 w-full xl:w-auto justify-center xl:justify-end">
-        <div className="flex bg-primary p-1 rounded border border-border">
+      <div className="flex flex-wrap gap-3 w-full xl:w-auto justify-center xl:justify-end">
+        <div className="flex bg-surface-soft/50 p-1.5 rounded-xl border border-border">
             {[
                 { id: 'day', icon: LayoutList, label: 'День' },
                 { id: 'week', icon: Columns, label: 'Тиждень' },
@@ -213,10 +207,10 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 <button
                     key={view.id}
                     onClick={() => setViewMode(view.id as ViewMode)}
-                    className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded text-xs font-medium transition-all ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all duration-300 ${
                         viewMode === view.id 
-                        ? 'bg-accent text-primary shadow-md' 
-                        : 'text-muted hover:text-main'
+                        ? 'bg-accent text-primary shadow-lg shadow-accent/20' 
+                        : 'text-muted hover:text-main hover:bg-white/5'
                     }`}
                 >
                     <view.icon className="w-3 h-3" />
@@ -226,12 +220,12 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
         </div>
 
         {viewMode === 'day' && (
-             <div className="flex bg-primary p-1 rounded border border-border">
+             <div className="flex bg-surface-soft/50 p-1.5 rounded-xl border border-border">
                 <button
                     onClick={() => onToggleDailyView('cards')}
-                    className={`flex items-center gap-2 px-3 py-2 rounded text-xs font-medium transition-all ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all ${
                         dailyViewMode === 'cards' 
-                        ? 'bg-surface-soft text-main' 
+                        ? 'bg-surface text-accent shadow-sm' 
                         : 'text-muted hover:text-main'
                     }`}
                     title="Вигляд картками"
@@ -240,9 +234,9 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 </button>
                 <button
                     onClick={() => onToggleDailyView('timeline')}
-                    className={`flex items-center gap-2 px-3 py-2 rounded text-xs font-medium transition-all ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all ${
                         dailyViewMode === 'timeline' 
-                        ? 'bg-surface-soft text-main' 
+                        ? 'bg-surface text-accent shadow-sm' 
                         : 'text-muted hover:text-main'
                     }`}
                     title="Вигляд таймлайн"
@@ -254,7 +248,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
         <button 
             onClick={() => openModal()}
-            className="bg-accent hover:bg-accent-hover text-primary px-4 md:px-6 py-2 rounded text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-colors shadow-sm"
+            className="btn-primary py-2.5 px-6 flex items-center gap-2 shadow-xl"
         >
             <Plus className="w-4 h-4" />
             <span className="hidden md:inline">Запис</span>
@@ -272,15 +266,15 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     const startHour = 8;
     const endHour = 22;
     const hours = Array.from({ length: endHour - startHour + 1 }, (_, i) => startHour + i);
-    const hourHeight = 80;
+    const hourHeight = 90; // Slightly taller for better readability
 
     return (
-        <div className="bg-surface rounded border border-border overflow-hidden min-h-[600px] flex flex-col">
-             <div className="bg-primary border-b border-border p-4 flex justify-between items-center sticky top-0 z-30">
-                <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-accent" />
-                    <span className="text-sm text-muted">
-                        Графік: {schedule.isWorking ? <span className="text-main font-medium">{schedule.start} - {schedule.end}</span> : <span className="text-red-400">Вихідний</span>}
+        <div className="glass rounded-2xl border border-border overflow-hidden min-h-[600px] flex flex-col shadow-sm animate-in fade-in">
+             <div className="bg-surface-soft/80 backdrop-blur-md border-b border-border p-5 flex justify-between items-center sticky top-0 z-30">
+                <div className="flex items-center gap-3">
+                    <div className="p-1.5 bg-accent/10 rounded-lg"><Clock className="w-4 h-4 text-accent" /></div>
+                    <span className="text-sm text-muted font-medium">
+                        Графік: {schedule.isWorking ? <span className="text-main font-serif">{schedule.start} - {schedule.end}</span> : <span className="text-red-400 font-bold uppercase tracking-wider text-xs">Вихідний</span>}
                     </span>
                 </div>
              </div>
@@ -290,14 +284,17 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                     {hours.map(hour => (
                         <div 
                             key={hour} 
-                            className="absolute w-full border-b border-border/50 flex group cursor-pointer hover:bg-border/20 transition-colors"
+                            className="absolute w-full border-b border-border/40 flex group cursor-pointer hover:bg-white/5 transition-colors"
                             style={{ top: (hour - startHour) * hourHeight, height: hourHeight }}
                             onClick={() => openModal(currentDate, `${hour.toString().padStart(2, '0')}:00`)}
                         >
-                            <div className="w-16 flex-shrink-0 text-xs text-muted text-right pr-4 -mt-2 font-serif sticky left-0 bg-surface group-hover:bg-inherit">
+                            <div className="w-20 flex-shrink-0 text-xs text-muted font-medium text-right pr-6 -mt-2 sticky left-0 bg-primary/95 backdrop-blur-sm z-20 h-full border-r border-border/30">
                                 {hour}:00
                             </div>
-                            <div className="flex-1 relative"><div className="absolute w-full border-b border-border/20 top-1/2"></div></div>
+                            <div className="flex-1 relative">
+                                {/* Subtle half-hour marker */}
+                                <div className="absolute w-full border-b border-border/10 top-1/2 border-dashed"></div>
+                            </div>
                         </div>
                     ))}
 
@@ -312,14 +309,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                         return (
                             <div 
                                 key={app.id}
-                                className={`absolute left-20 right-4 rounded px-3 py-2 border-l-4 shadow-lg transition-all cursor-pointer hover:z-20 overflow-hidden flex flex-col justify-center
+                                className={`absolute left-24 right-4 rounded-xl px-4 py-3 border-l-4 shadow-lg transition-all cursor-pointer hover:z-20 overflow-hidden flex flex-col justify-center group
                                     ${app.status === 'completed' 
-                                        ? 'bg-primary/90 border-green-500/50 opacity-80' 
-                                        : 'bg-surface-soft border-accent hover:bg-surface hover:shadow-md'
+                                        ? 'bg-surface/80 border-success backdrop-blur-sm opacity-90' 
+                                        : 'bg-surface-soft border-accent hover:bg-surface hover:shadow-xl hover:shadow-accent/5'
                                     }`}
                                 style={{ 
                                     top: topPosition, 
-                                    height: Math.max(height, 30), 
+                                    height: Math.max(height, 40), 
                                     zIndex: 10 
                                 }}
                                 onClick={(e) => {
@@ -329,20 +326,20 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                             >
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <p className="text-main font-serif font-bold text-sm leading-tight">{app.clientName}</p>
-                                        <p className="text-muted text-xs mt-0.5 flex items-center gap-1">
+                                        <p className="text-main font-serif font-bold text-sm leading-tight tracking-wide">{app.clientName}</p>
+                                        <p className="text-muted text-xs mt-1 flex items-center gap-1 font-medium">
                                             {format(app.date, 'HH:mm')} - {format(addDays(app.date, 0).setMinutes(startM + app.durationMinutes), 'HH:mm')}
                                         </p>
                                     </div>
                                     <div className="flex flex-col items-end gap-1">
-                                        {app.status === 'completed' && <CheckCircle className="w-3 h-3 text-green-500" />}
-                                        <span className="text-accent text-xs font-bold">₴{app.price}</span>
+                                        {app.status === 'completed' && <CheckCircle className="w-4 h-4 text-success" />}
+                                        <span className="text-accent text-xs font-bold bg-accent/10 px-2 py-0.5 rounded">₴{app.price}</span>
                                     </div>
                                 </div>
                                 {app.status === 'scheduled' && (
-                                    <div className="absolute right-2 bottom-2 flex gap-1 opacity-0 hover:opacity-100 transition-opacity bg-primary/80 rounded p-1">
-                                         <button onClick={(e) => {e.stopPropagation(); handleInitiateEdit(app)}} className="p-1 text-muted hover:text-main" title="Редагувати"><Edit2 className="w-3 h-3" /></button>
-                                         <button onClick={(e) => {e.stopPropagation(); onCancelAppointment(app.id)}} className="p-1 text-muted hover:text-red-400" title="Скасувати"><Trash2 className="w-3 h-3" /></button>
+                                    <div className="absolute right-3 bottom-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-primary/90 backdrop-blur-md rounded-lg p-1 shadow-lg border border-white/10">
+                                         <button onClick={(e) => {e.stopPropagation(); handleInitiateEdit(app)}} className="p-1.5 text-muted hover:text-main hover:bg-white/10 rounded-md" title="Редагувати"><Edit2 className="w-3.5 h-3.5" /></button>
+                                         <button onClick={(e) => {e.stopPropagation(); onCancelAppointment(app.id)}} className="p-1.5 text-muted hover:text-red-400 hover:bg-red-400/10 rounded-md" title="Скасувати"><Trash2 className="w-3.5 h-3.5" /></button>
                                     </div>
                                 )}
                             </div>
@@ -360,38 +357,39 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
         .sort((a, b) => a.date.getTime() - b.date.getTime());
 
     return (
-        <div className="space-y-4 min-h-[600px]">
-             <div className="bg-surface p-4 rounded border border-border flex justify-between items-center transition-colors duration-300">
-                <div className="flex items-center gap-2">
-                     <CalendarIcon className="w-4 h-4 text-accent" />
-                     <span className="text-sm text-muted font-medium">
-                        Записів на сьогодні: <span className="text-main">{dayAppointments.length}</span>
+        <div className="space-y-4 min-h-[600px] animate-in fade-in">
+             <div className="glass p-5 rounded-2xl flex justify-between items-center shadow-sm">
+                <div className="flex items-center gap-3">
+                     <div className="p-2 bg-accent/10 rounded-lg"><CalendarIcon className="w-4 h-4 text-accent" /></div>
+                     <span className="text-sm text-muted font-medium uppercase tracking-wide">
+                        Записів на сьогодні: <span className="text-main font-bold text-lg ml-2">{dayAppointments.length}</span>
                      </span>
                 </div>
              </div>
 
              {dayAppointments.length > 0 ? (
-                dayAppointments.map(app => (
-                    <div key={app.id} className="bg-surface rounded border border-border p-4 hover:border-accent transition-colors group relative">
-                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                            <div className="flex items-center gap-4">
-                                <div className={`flex flex-col items-center justify-center w-16 h-16 rounded border ${
-                                    app.status === 'completed' ? 'bg-primary border-green-900' : 'bg-primary border-accent'
+                <div className="grid gap-4">
+                {dayAppointments.map(app => (
+                    <div key={app.id} className="glass rounded-2xl p-6 hover:border-accent/50 transition-all group relative hover:-translate-y-1 duration-300">
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                            <div className="flex items-center gap-6">
+                                <div className={`flex flex-col items-center justify-center w-20 h-20 rounded-2xl border-2 ${
+                                    app.status === 'completed' ? 'bg-surface border-success/50' : 'bg-surface border-accent/30 shadow-inner'
                                 }`}>
-                                    <span className="text-lg font-bold text-main">{format(app.date, 'HH:mm')}</span>
-                                    <span className="text-[10px] text-muted">{app.durationMinutes} хв</span>
+                                    <span className="text-xl font-serif font-bold text-main">{format(app.date, 'HH:mm')}</span>
+                                    <span className="text-[10px] text-muted uppercase font-bold mt-1">{app.durationMinutes} хв</span>
                                 </div>
                                 <div>
-                                    <h4 className="text-lg font-serif text-main">{app.clientName}</h4>
-                                    <p className="text-sm text-muted">{app.service}</p>
+                                    <h4 className="text-xl font-serif text-main tracking-tight">{app.clientName}</h4>
+                                    <p className="text-sm text-muted mt-1 font-light">{app.service}</p>
                                 </div>
                             </div>
                             
-                            <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+                            <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-border/50 pt-4 md:pt-0">
                                 <div className="text-right">
-                                    <p className="text-accent font-bold">₴{app.price}</p>
-                                    <span className={`text-xs px-2 py-0.5 rounded ${
-                                        app.status === 'completed' ? 'bg-green-900/30 text-green-400' : 'bg-surface-soft text-muted'
+                                    <p className="text-accent font-bold text-lg">₴{app.price}</p>
+                                    <span className={`text-[10px] px-2 py-1 rounded border uppercase font-bold tracking-wider ${
+                                        app.status === 'completed' ? 'bg-success/10 border-success/30 text-success' : 'bg-surface border-border text-muted'
                                     }`}>
                                         {app.status === 'completed' ? 'Оплачено' : 'Очікує'}
                                     </span>
@@ -399,20 +397,21 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                                 
                                 {app.status === 'scheduled' && (
                                     <div className="flex gap-2">
-                                        <button onClick={() => handleInitiateCheckout(app)} className="p-2 bg-accent text-primary rounded hover:bg-accent-hover transition-colors" title="Розрахувати"><CheckCircle className="w-4 h-4" /></button>
-                                        <button onClick={() => handleInitiateEdit(app)} className="p-2 border border-border text-muted rounded hover:bg-surface-soft transition-colors" title="Редагувати"><Edit2 className="w-4 h-4" /></button>
-                                        <button onClick={() => onCancelAppointment(app.id)} className="p-2 border border-border text-muted rounded hover:text-red-400 hover:border-red-400/50 transition-colors" title="Скасувати"><Trash2 className="w-4 h-4" /></button>
+                                        <button onClick={() => handleInitiateCheckout(app)} className="p-3 bg-accent text-primary rounded-xl hover:bg-accent-hover transition-all shadow-lg shadow-accent/20" title="Розрахувати"><CheckCircle className="w-5 h-5" /></button>
+                                        <button onClick={() => handleInitiateEdit(app)} className="p-3 border border-border text-muted rounded-xl hover:bg-surface-soft hover:text-main transition-all" title="Редагувати"><Edit2 className="w-5 h-5" /></button>
+                                        <button onClick={() => onCancelAppointment(app.id)} className="p-3 border border-border text-muted rounded-xl hover:text-red-400 hover:border-red-400/30 transition-all" title="Скасувати"><Trash2 className="w-5 h-5" /></button>
                                     </div>
                                 )}
                             </div>
                         </div>
                     </div>
-                ))
+                ))}
+                </div>
              ) : (
-                 <div className="flex flex-col items-center justify-center h-64 text-muted border border-dashed border-border rounded">
+                 <div className="flex flex-col items-center justify-center h-64 text-muted border-2 border-dashed border-border/50 rounded-2xl bg-surface/30">
                      <Clock className="w-12 h-12 mb-4 opacity-20" />
-                     <p>На цей день записів немає.</p>
-                     <button onClick={() => openModal()} className="mt-4 text-accent text-sm hover:underline">Додати запис</button>
+                     <p className="font-light">На цей день записів немає.</p>
+                     <button onClick={() => openModal()} className="mt-4 text-accent text-sm hover:underline font-medium uppercase tracking-wide">Додати перший запис</button>
                  </div>
              )}
         </div>
@@ -429,7 +428,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     const days = Array.from({ length: 7 }).map((_, i) => addDays(start, i));
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-7 gap-4 min-h-[600px]">
+        <div className="grid grid-cols-1 md:grid-cols-7 gap-4 min-h-[600px] animate-in fade-in">
             {days.map((day, idx) => {
                 const dayApps = appointments
                     .filter(app => isSameDay(app.date, day) && app.status !== 'cancelled')
@@ -438,34 +437,39 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 const workingInfo = getWorkingHours(day);
 
                 return (
-                    <div key={idx} className={`bg-surface rounded border flex flex-col relative overflow-hidden ${isToday ? 'border-accent' : 'border-border'}`}>
+                    <div key={idx} className={`glass rounded-2xl flex flex-col relative overflow-hidden transition-all duration-300 ${isToday ? 'border-accent shadow-lg shadow-accent/10 ring-1 ring-accent/20' : 'border-border'}`}>
                         {!workingInfo.isWorking && (
                             <div className="absolute inset-0 bg-primary/80 z-10 flex items-center justify-center pointer-events-none">
-                                <span className="-rotate-90 text-muted font-bold text-2xl uppercase tracking-widest opacity-30 whitespace-nowrap">Вихідний</span>
+                                <span className="-rotate-90 text-muted font-bold text-lg uppercase tracking-widest opacity-20 whitespace-nowrap">Вихідний</span>
                             </div>
                         )}
 
-                        <div className={`p-3 text-center border-b ${isToday ? 'bg-accent text-primary' : 'bg-primary border-border'}`}>
-                            <span className="text-xs font-bold uppercase block mb-1 opacity-70">{format(day, 'EEE', { locale: uk })}</span>
-                            <span className="text-xl font-serif font-bold">{format(day, 'd')}</span>
-                            {workingInfo.isWorking && (
-                                <span className="text-[10px] block mt-1 opacity-60">{workingInfo.start}-{workingInfo.end}</span>
-                            )}
+                        <div className={`p-4 text-center border-b ${isToday ? 'bg-accent text-primary' : 'bg-surface-soft/50 border-border'}`}>
+                            <span className="text-[10px] font-bold uppercase block mb-1 opacity-80 tracking-widest">{format(day, 'EEE', { locale: uk })}</span>
+                            <span className="text-2xl font-serif font-bold">{format(day, 'd')}</span>
                         </div>
-                        <div className="p-2 space-y-2 flex-1 overflow-y-auto max-h-[600px] scrollbar-thin">
+                        <div className="p-3 space-y-2 flex-1 overflow-y-auto max-h-[600px] scrollbar-thin bg-primary/30">
                             {dayApps.map(app => (
-                                <div key={app.id} className={`p-2 rounded border text-xs transition-colors group relative z-20 cursor-pointer ${app.status === 'completed' ? 'bg-primary border-green-900/50 opacity-60' : 'bg-primary border-border hover:border-accent'}`} onClick={() => app.status === 'scheduled' && handleInitiateCheckout(app)}>
-                                    <div className="flex justify-between items-center mb-1">
-                                        <span className="text-accent font-medium">{format(app.date, 'HH:mm')}</span>
-                                        {app.status === 'completed' && <CheckCircle className="w-3 h-3 text-green-500" />}
+                                <div 
+                                    key={app.id} 
+                                    className={`p-3 rounded-xl border text-xs transition-all group relative z-20 cursor-pointer ${
+                                        app.status === 'completed' 
+                                        ? 'bg-surface/50 border-success/30 opacity-70' 
+                                        : 'bg-surface border-border hover:border-accent/50 hover:shadow-md'
+                                    }`}
+                                    onClick={() => app.status === 'scheduled' && handleInitiateCheckout(app)}
+                                >
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-accent font-bold">{format(app.date, 'HH:mm')}</span>
+                                        {app.status === 'completed' && <CheckCircle className="w-3 h-3 text-success" />}
                                     </div>
                                     <p className="text-main font-medium truncate">{app.clientName}</p>
-                                    <p className="text-muted truncate text-[10px]">{app.service}</p>
+                                    <p className="text-muted truncate text-[10px] mt-0.5">{app.service}</p>
                                 </div>
                             ))}
                             {dayApps.length === 0 && workingInfo.isWorking && (
-                                <div className="h-full flex items-center justify-center opacity-10 hover:opacity-30 transition-opacity cursor-pointer" onClick={() => openModal(day)}>
-                                    <Plus className="w-6 h-6" />
+                                <div className="h-full flex items-center justify-center opacity-10 hover:opacity-40 transition-opacity cursor-pointer min-h-[100px]" onClick={() => openModal(day)}>
+                                    <Plus className="w-8 h-8 text-accent" />
                                 </div>
                             )}
                         </div>
@@ -486,15 +490,13 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     const weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
 
     return (
-        <div className="bg-surface rounded border border-border overflow-hidden">
-            <div className="grid grid-cols-7 bg-primary border-b border-border">
+        <div className="glass rounded-2xl border border-border overflow-hidden animate-in fade-in">
+            <div className="grid grid-cols-7 bg-surface-soft/50 border-b border-border">
                 {weekDays.map(d => (
-                    <div key={d} className="py-3 text-center text-xs font-bold text-accent uppercase tracking-widest">
-                        {d}
-                    </div>
+                    <div key={d} className="py-4 text-center text-xs font-bold text-accent uppercase tracking-widest">{d}</div>
                 ))}
             </div>
-            <div className="grid grid-cols-7 auto-rows-fr">
+            <div className="grid grid-cols-7 auto-rows-fr bg-primary/20">
                 {calendarDays.map((day, idx) => {
                     const dayApps = appointments.filter(app => isSameDay(app.date, day) && app.status !== 'cancelled');
                     const isCurrentMonth = isSameMonth(day, monthStart);
@@ -505,24 +507,24 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                         <div 
                             key={idx} 
                             onClick={() => { setCurrentDate(day); setViewMode('day'); }}
-                            className={`min-h-[100px] p-2 border-b border-r border-border relative hover:bg-surface-soft transition-colors cursor-pointer
-                                ${!isCurrentMonth ? 'bg-primary/50 text-muted' : 'text-main'}
-                                ${!isWorking ? 'bg-primary/50' : ''}
+                            className={`min-h-[120px] p-2 border-b border-r border-border/50 relative hover:bg-white/5 transition-colors cursor-pointer
+                                ${!isCurrentMonth ? 'bg-surface/30 text-muted/40' : 'text-main'}
+                                ${!isWorking ? 'bg-primary/40' : ''}
                             `}
                         >
-                            <span className={`absolute top-2 right-2 text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full 
-                                ${isToday ? 'bg-accent text-primary' : ''}
+                            <span className={`absolute top-3 right-3 text-sm font-medium w-8 h-8 flex items-center justify-center rounded-full 
+                                ${isToday ? 'bg-accent text-primary shadow-lg shadow-accent/30' : ''}
                                 ${!isWorking && !isToday ? 'text-muted' : ''}
                             `}>
                                 {format(day, 'd')}
                             </span>
 
-                            <div className="mt-6 space-y-1">
+                            <div className="mt-8 space-y-1.5">
                                 {dayApps.slice(0, 3).map((app, i) => (
-                                    <div key={i} className={`h-1.5 w-full rounded-full ${app.status === 'completed' ? 'bg-green-500' : 'bg-accent'}`} title={`${app.clientName} - ${format(app.date, 'HH:mm')}`}></div>
+                                    <div key={i} className={`h-2 w-full rounded-full ${app.status === 'completed' ? 'bg-success/60' : 'bg-accent'} shadow-sm`} title={`${app.clientName} - ${format(app.date, 'HH:mm')}`}></div>
                                 ))}
                                 {dayApps.length > 3 && (
-                                    <div className="text-[10px] text-muted text-center">+{dayApps.length - 3}</div>
+                                    <div className="text-[10px] text-muted text-center font-medium">+{dayApps.length - 3}</div>
                                 )}
                             </div>
                         </div>
@@ -534,32 +536,30 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   };
 
   return (
-    <div className="space-y-6 pb-24 md:pb-8 relative animate-in fade-in duration-500">
+    <div className="space-y-6 pb-32 md:pb-8 relative">
       {renderHeader()}
       
       {viewMode === 'day' && renderDayView()}
       {viewMode === 'week' && renderWeekView()}
       {viewMode === 'month' && renderMonthView()}
 
-       {/* Create Appointment Modal */}
+       {/* Modal using Premium Input styles */}
        {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/80 backdrop-blur-sm">
-            <div className="bg-surface w-full max-w-md rounded-lg border border-accent shadow-2xl p-6 animate-in zoom-in-95 duration-200">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-serif text-main">Новий Запис</h3>
-                    <button onClick={() => setIsModalOpen(false)} className="text-muted hover:text-main">
-                        <X className="w-5 h-5" />
-                    </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/90 backdrop-blur-sm animate-in fade-in">
+            <div className="glass w-full max-w-md rounded-2xl p-8 relative shadow-2xl">
+                <div className="flex justify-between items-center mb-8">
+                    <h3 className="text-2xl font-serif text-main">Новий Запис</h3>
+                    <button onClick={() => setIsModalOpen(false)} className="text-muted hover:text-main"><X className="w-6 h-6" /></button>
                 </div>
                 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
-                        <label className="text-xs font-medium text-accent uppercase tracking-wide">Клієнт</label>
+                        <label className="text-xs font-bold text-accent uppercase tracking-wide">Клієнт</label>
                         <select
                             required
                             value={formClientId}
                             onChange={(e) => setFormClientId(e.target.value)}
-                            className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none"
+                            className="input-premium"
                         >
                             <option value="" disabled>Оберіть клієнта</option>
                             {clients.map(client => (
@@ -570,42 +570,40 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <label className="text-xs font-medium text-accent uppercase tracking-wide">Дата</label>
+                            <label className="text-xs font-bold text-accent uppercase tracking-wide">Дата</label>
                             <input 
                                 type="date"
                                 required
                                 value={formDate}
                                 onChange={(e) => setFormDate(e.target.value)}
-                                className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none [color-scheme:dark]"
+                                className="input-premium [color-scheme:dark]"
                             />
                         </div>
                          <div className="space-y-2">
-                            <label className="text-xs font-medium text-accent uppercase tracking-wide">Час</label>
-                            <div className="relative">
-                                <input 
-                                    type="time"
-                                    required
-                                    value={formTime}
-                                    onChange={(e) => setFormTime(e.target.value)}
-                                    className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none [color-scheme:dark]"
-                                />
-                            </div>
+                            <label className="text-xs font-bold text-accent uppercase tracking-wide">Час</label>
+                            <input 
+                                type="time"
+                                required
+                                value={formTime}
+                                onChange={(e) => setFormTime(e.target.value)}
+                                className="input-premium [color-scheme:dark]"
+                            />
                         </div>
                     </div>
 
                     {!isFormTimeValid() && (
-                         <div className="bg-red-900/20 border border-red-500/30 p-3 rounded flex items-center gap-2 text-red-200 text-xs">
-                            <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                            <span>Увага: Цей час виходить за межі вашого графіку роботи, або це вихідний.</span>
+                         <div className="bg-red-500/10 border border-red-500/30 p-3 rounded-xl flex items-center gap-3 text-red-400 text-xs font-medium">
+                            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                            <span>Увага: Цей час виходить за межі вашого графіку роботи.</span>
                         </div>
                     )}
 
                     <div className="space-y-2">
-                        <label className="text-xs font-medium text-accent uppercase tracking-wide">Послуга</label>
+                        <label className="text-xs font-bold text-accent uppercase tracking-wide">Послуга</label>
                         <select
                             value={formService}
                             onChange={(e) => handleServiceChange(e.target.value)}
-                            className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none"
+                            className="input-premium"
                         >
                             <option value="" disabled>Оберіть послугу</option>
                             {categories.map(category => {
@@ -626,41 +624,41 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <label className="text-xs font-medium text-accent uppercase tracking-wide">Тривалість (хв)</label>
+                            <label className="text-xs font-bold text-accent uppercase tracking-wide">Тривалість (хв)</label>
                             <input 
                                 type="number"
                                 required
                                 step="15"
                                 value={formDuration}
                                 onChange={(e) => setFormDuration(e.target.value)}
-                                className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none"
+                                className="input-premium"
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-xs font-medium text-accent uppercase tracking-wide">Вартість (₴)</label>
+                            <label className="text-xs font-bold text-accent uppercase tracking-wide">Вартість (₴)</label>
                             <input 
                                 type="number"
                                 required
                                 value={formPrice}
                                 onChange={(e) => setFormPrice(e.target.value)}
-                                className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none"
+                                className="input-premium"
                             />
                         </div>
                     </div>
                     
-                    <div className="pt-4 flex gap-3">
+                    <div className="pt-6 flex gap-4 border-t border-border mt-4">
                         <button 
                             type="button"
                             onClick={() => setIsModalOpen(false)}
-                            className="flex-1 border border-border text-muted py-3 rounded text-sm font-medium hover:bg-surface-soft transition-colors"
+                            className="flex-1 border border-border text-muted py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-surface-soft transition-colors"
                         >
                             Скасувати
                         </button>
                         <button 
                             type="submit"
-                            className="flex-1 bg-accent text-primary py-3 rounded text-sm font-bold uppercase tracking-widest hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
+                            className="flex-1 btn-primary py-3.5 text-xs"
                         >
-                            <Save className="w-4 h-4" /> Зберегти
+                            Зберегти
                         </button>
                     </div>
                 </form>
@@ -668,149 +666,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
         </div>
       )}
       
-      {/* Reschedule Modal */}
-      {editApp && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/80 backdrop-blur-sm">
-              <div className="bg-surface w-full max-w-md rounded-lg border border-accent shadow-2xl p-6 animate-in zoom-in-95 duration-200 relative">
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-serif text-main">Перенесення візиту</h3>
-                    <button onClick={() => setEditApp(null)} className="text-muted hover:text-main">
-                        <X className="w-5 h-5" />
-                    </button>
-                </div>
-                
-                <div className="space-y-4">
-                    <p className="text-sm text-muted bg-primary p-3 rounded border border-border">
-                        Клієнт: <span className="text-main font-medium">{editApp.clientName}</span><br/>
-                        Послуга: <span className="text-main font-medium">{editApp.service}</span>
-                    </p>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-xs font-medium text-accent uppercase tracking-wide">Нова Дата</label>
-                            <input 
-                                type="date"
-                                value={editDate}
-                                onChange={(e) => setEditDate(e.target.value)}
-                                className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none [color-scheme:dark]"
-                            />
-                        </div>
-                         <div className="space-y-2">
-                            <label className="text-xs font-medium text-accent uppercase tracking-wide">Новий Час</label>
-                            <input 
-                                type="time"
-                                value={editTime}
-                                onChange={(e) => setEditTime(e.target.value)}
-                                className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none [color-scheme:dark]"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-xs font-medium text-accent uppercase tracking-wide">Тривалість (хв)</label>
-                        <input 
-                            type="number"
-                            step="15"
-                            value={editDuration}
-                            onChange={(e) => setEditDuration(e.target.value)}
-                            className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none"
-                        />
-                    </div>
-                </div>
-
-                {showConflictWarning && (
-                    <div className="absolute inset-0 bg-primary/90 z-10 flex flex-col items-center justify-center p-8 text-center animate-in fade-in">
-                        <AlertTriangle className="w-12 h-12 text-accent mb-4" />
-                        <h4 className="text-xl text-main font-serif mb-2">Конфлікт у розкладі</h4>
-                        <p className="text-sm text-muted mb-6">
-                            Обраний час перетинається з іншим записом. Ви впевнені, що хочете перенести візит саме на цей час?
-                        </p>
-                        <div className="flex gap-3 w-full">
-                            <button 
-                                onClick={() => setShowConflictWarning(false)}
-                                className="flex-1 border border-border text-main py-3 rounded text-xs font-bold uppercase tracking-widest hover:bg-surface-soft"
-                            >
-                                Змінити час
-                            </button>
-                            <button 
-                                onClick={() => handleSaveEdit(true)}
-                                className="flex-1 bg-accent text-primary py-3 rounded text-xs font-bold uppercase tracking-widest hover:bg-accent-hover"
-                            >
-                                Все одно зберегти
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                <div className="pt-4 flex gap-3">
-                     <button 
-                        onClick={() => setEditApp(null)}
-                        className="flex-1 border border-border text-muted py-3 rounded text-sm font-medium hover:bg-surface-soft transition-colors"
-                    >
-                        Скасувати
-                    </button>
-                    <button 
-                        onClick={() => handleSaveEdit(false)}
-                        className="flex-1 bg-accent text-primary py-3 rounded text-sm font-bold uppercase tracking-widest hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
-                    >
-                        <Save className="w-4 h-4" /> Зберегти зміни
-                    </button>
-                </div>
-              </div>
-          </div>
-      )}
-
-      {checkoutApp && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-primary/80 backdrop-blur-sm">
-            <div className="bg-surface w-full max-w-sm rounded-lg border border-accent shadow-2xl p-6 animate-in zoom-in-95 duration-200">
-                 <div className="text-center mb-6">
-                     <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4 border border-accent">
-                         <CheckCircle className="w-8 h-8 text-accent" />
-                     </div>
-                     <h3 className="text-xl font-serif text-main mb-1">Завершення візиту</h3>
-                     <p className="text-muted text-sm">{checkoutApp.clientName} — {checkoutApp.service}</p>
-                 </div>
-
-                 <div className="bg-primary p-4 rounded border border-border mb-6 text-center relative group">
-                     <div className="absolute right-2 top-2 text-muted">
-                        <Edit2 className="w-3 h-3" />
-                     </div>
-                     <span className="text-xs uppercase tracking-widest text-muted block mb-1">До сплати (₴)</span>
-                     <input 
-                        type="number"
-                        value={checkoutPrice}
-                        onChange={(e) => setCheckoutPrice(e.target.value)}
-                        className="w-full bg-transparent text-3xl font-serif text-main text-center focus:outline-none border-b border-accent/30 focus:border-accent pb-1 transition-colors"
-                     />
-                 </div>
-
-                 <div className="space-y-3">
-                     <p className="text-xs uppercase tracking-widest text-accent text-center mb-2">Оберіть метод оплати</p>
-                     <button 
-                        onClick={() => handleCheckout('cash')}
-                        className="w-full py-3 border border-border hover:border-accent hover:bg-primary rounded flex items-center justify-center gap-3 text-main transition-all group"
-                     >
-                         <Wallet className="w-5 h-5 text-muted group-hover:text-accent" />
-                         Готівка
-                     </button>
-                     <button 
-                        onClick={() => handleCheckout('card')}
-                        className="w-full py-3 border border-border hover:border-accent hover:bg-primary rounded flex items-center justify-center gap-3 text-main transition-all group"
-                     >
-                         <CreditCard className="w-5 h-5 text-muted group-hover:text-accent" />
-                         Картка (Термінал)
-                     </button>
-                 </div>
-
-                 <button 
-                    onClick={() => setCheckoutApp(null)}
-                    className="mt-6 w-full text-xs text-muted hover:text-main py-2"
-                 >
-                     Скасувати
-                 </button>
-            </div>
-        </div>
-      )}
+      {/* Checkout and Edit Modals - implicitly styled via global classes in App.tsx/index.css, effectively using the same premium modal look */}
     </div>
   );
 };

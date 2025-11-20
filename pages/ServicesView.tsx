@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Scissors, Plus, X, Save, Edit2, Trash2, Clock, FolderPlus, Trash, ChevronDown, ChevronUp } from 'lucide-react';
 import { ServiceCategory, ServiceItem } from '../types';
@@ -35,72 +34,117 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     const handleCategorySubmit = (e: React.FormEvent) => { e.preventDefault(); if (categoryTitle) { onAddCategory(categoryTitle); setCategoryTitle(''); setIsCategoryModalOpen(false); } };
 
     return (
-        <div className="h-[calc(100vh-6rem)] md:h-auto flex flex-col space-y-6 pb-20 md:pb-8 relative">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-border pb-4 gap-4">
-                <h2 className="text-2xl font-serif text-main">Прайс-лист Послуг</h2>
-                <button onClick={() => setIsCategoryModalOpen(true)} className="bg-primary border border-accent text-accent hover:bg-accent hover:text-primary px-4 py-2 rounded text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all">
+        <div className="h-[calc(100vh-6rem)] md:h-auto flex flex-col space-y-8 pb-20 md:pb-8 relative animate-in fade-in duration-500">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-border pb-6 gap-4">
+                <div>
+                    <h2 className="text-3xl font-serif text-main font-bold">Послуги</h2>
+                    <p className="text-muted text-sm mt-1 font-light">Керування вашим прайс-листом.</p>
+                </div>
+                <button onClick={() => setIsCategoryModalOpen(true)} className="bg-primary border border-accent text-accent hover:bg-accent hover:text-primary px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-sm hover:shadow-accent/20">
                     <FolderPlus className="w-4 h-4" /> <span className="hidden md:inline">Створити Розділ</span>
                 </button>
             </div>
+
             {categories.length === 0 && (
-                <div className="text-center py-12 text-muted italic border border-dashed border-border rounded">
-                    <Scissors className="w-12 h-12 mx-auto mb-2 opacity-20" />
-                    Створіть перший розділ (наприклад, "Стрижки"), щоб додати послуги.
+                <div className="text-center py-20 text-muted/50 italic border-2 border-dashed border-border rounded-2xl bg-surface/20">
+                    <Scissors className="w-16 h-16 mx-auto mb-4 opacity-20" />
+                    <p className="text-lg">Прайс-лист порожній.</p>
+                    <p className="text-sm mt-2">Створіть перший розділ (наприклад, "Стрижки"), щоб додати послуги.</p>
                 </div>
             )}
-            <div className="space-y-8">
+
+            <div className="space-y-6">
                 {categories.map(category => {
                     const categoryServices = services.filter(s => s.categoryId === category.id);
                     const isExpanded = expandedCategories.includes(category.id);
+
                     return (
-                        <div key={category.id} className="space-y-4 animate-in fade-in">
-                            <div className="flex items-center justify-between bg-surface p-3 rounded border border-border group">
-                                <div className="flex items-center gap-3 cursor-pointer flex-1" onClick={() => toggleCategory(category.id)}>
-                                    <div className={`p-1 rounded hover:bg-surface-soft transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}><ChevronDown className="w-4 h-4 text-accent" /></div>
-                                    <h3 className="text-lg font-serif text-main">{category.title}</h3>
-                                    <span className="text-xs text-muted bg-primary px-2 py-0.5 rounded-full">{categoryServices.length}</span>
+                        <div key={category.id} className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
+                            {/* Glass Header for Category */}
+                            <div className={`flex items-center justify-between glass p-4 rounded-xl border transition-all duration-300 group ${isExpanded ? 'border-accent/30 bg-surface-soft/50' : 'border-border hover:border-muted'}`}>
+                                <div className="flex items-center gap-4 cursor-pointer flex-1" onClick={() => toggleCategory(category.id)}>
+                                    <div className={`p-2 rounded-full bg-primary border border-border transition-transform duration-300 ${isExpanded ? 'rotate-180 text-accent border-accent' : 'text-muted'}`}>
+                                        <ChevronDown className="w-4 h-4" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-serif text-main font-medium">{category.title}</h3>
+                                    </div>
+                                    <span className="text-[10px] font-bold text-muted bg-primary px-3 py-1 rounded-full border border-border ml-2">{categoryServices.length}</span>
                                 </div>
-                                <div className="flex gap-2"><button onClick={() => openServiceModal(category.id)} className="bg-accent text-primary px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wider hover:bg-accent-hover flex items-center gap-1"><Plus className="w-3 h-3" /> Додати послугу</button><button onClick={() => onDeleteCategory(category.id)} className="p-1.5 text-muted hover:text-red-400 rounded hover:bg-primary" title="Видалити розділ"><Trash className="w-4 h-4" /></button></div>
+                                <div className="flex gap-2">
+                                    <button onClick={() => openServiceModal(category.id)} className="bg-accent text-primary px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-accent-hover flex items-center gap-1 shadow-sm transition-all"><Plus className="w-3 h-3" /> <span className="hidden sm:inline">Послуга</span></button>
+                                    <button onClick={() => onDeleteCategory(category.id)} className="p-2 text-muted hover:text-red-400 rounded-lg hover:bg-primary border border-transparent hover:border-red-400/30 transition-all" title="Видалити розділ"><Trash className="w-4 h-4" /></button>
+                                </div>
                             </div>
-                            {isExpanded && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pl-4 md:pl-0">
-                                    {categoryServices.map(service => (
-                                        <div key={service.id} className="bg-primary rounded border border-border p-4 hover:border-accent/50 transition-all group/card relative">
-                                            <div className="flex justify-between items-start mb-2"><h4 className="font-medium text-main">{service.title}</h4><div className="flex gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity"><button onClick={() => openServiceModal(category.id, service)} className="p-1.5 bg-surface rounded text-muted hover:text-accent"><Edit2 className="w-3 h-3" /></button><button onClick={() => onDeleteService(service.id)} className="p-1.5 bg-surface rounded text-muted hover:text-red-400"><Trash2 className="w-3 h-3" /></button></div></div>
-                                            <p className="text-xs text-muted mb-3 h-8 overflow-hidden">{service.description || '...'}</p>
-                                            <div className="flex items-center justify-between pt-2 border-t border-border"><div className="flex items-center gap-1 text-xs text-muted"><Clock className="w-3 h-3" /> {service.duration} хв</div><div className="font-bold text-accent">₴{service.price}</div></div>
+
+                            {/* Services Grid */}
+                            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pl-2 md:pl-4 transition-all duration-500 ease-in-out origin-top ${isExpanded ? 'opacity-100 max-h-[2000px]' : 'opacity-0 max-h-0 overflow-hidden'}`}>
+                                {categoryServices.map(service => (
+                                    <div key={service.id} className="bg-surface p-5 rounded-xl border border-border hover:border-accent/40 transition-all group/card relative hover:-translate-y-1 hover:shadow-lg shadow-sm">
+                                        <div className="flex justify-between items-start mb-3">
+                                            <h4 className="font-medium text-main text-lg font-serif">{service.title}</h4>
+                                            <div className="flex gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity duration-200 absolute top-3 right-3 bg-surface p-1 rounded-lg border border-border shadow-md">
+                                                <button onClick={() => openServiceModal(category.id, service)} className="p-1.5 hover:bg-surface-soft rounded text-muted hover:text-accent transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
+                                                <button onClick={() => onDeleteService(service.id)} className="p-1.5 hover:bg-surface-soft rounded text-muted hover:text-red-400 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                                            </div>
                                         </div>
-                                    ))}
-                                    {categoryServices.length === 0 && (<div className="col-span-full py-4 text-center text-xs text-muted border border-dashed border-border rounded">Цей розділ порожній. Додайте послугу.</div>)}
-                                </div>
-                            )}
+                                        <p className="text-xs text-muted mb-4 h-8 overflow-hidden font-light line-clamp-2">{service.description || 'Опис відсутній'}</p>
+                                        <div className="flex items-center justify-between pt-3 border-t border-border/50">
+                                            <div className="flex items-center gap-1.5 text-xs text-muted font-medium uppercase tracking-wide">
+                                                <Clock className="w-3.5 h-3.5 text-accent" /> {service.duration} хв
+                                            </div>
+                                            <div className="font-bold text-accent text-lg">₴{service.price}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {categoryServices.length === 0 && (
+                                    <div className="col-span-full py-8 text-center text-xs text-muted border-2 border-dashed border-border rounded-xl bg-surface/20">
+                                        Цей розділ порожній. Додайте першу послугу.
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     );
                 })}
             </div>
+
+            {/* Modals using new premium classes */}
             {isCategoryModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/80 backdrop-blur-sm">
-                    <div className="bg-surface w-full max-w-sm rounded-lg border border-accent shadow-2xl p-6 animate-in zoom-in-95 duration-200">
-                         <div className="flex justify-between items-center mb-6"><h3 className="text-xl font-serif text-main">Новий Розділ</h3><button onClick={() => setIsCategoryModalOpen(false)} className="text-muted hover:text-main"><X className="w-5 h-5" /></button></div>
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/90 backdrop-blur-sm animate-in fade-in">
+                    <div className="glass w-full max-w-sm rounded-2xl border border-accent/50 shadow-2xl p-8 animate-in zoom-in-95 duration-200">
+                         <div className="flex justify-between items-center mb-8">
+                             <h3 className="text-2xl font-serif text-main">Новий Розділ</h3>
+                             <button onClick={() => setIsCategoryModalOpen(false)} className="text-muted hover:text-main"><X className="w-6 h-6" /></button>
+                        </div>
                         <form onSubmit={handleCategorySubmit}>
-                            <div className="mb-6"><label className="text-xs font-medium text-accent uppercase tracking-wide block mb-2">Назва Розділу</label><input type="text" required value={categoryTitle} onChange={(e) => setCategoryTitle(e.target.value)} placeholder="Наприклад: Фарбування" className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none" autoFocus /></div>
-                            <button type="submit" className="w-full bg-accent text-primary py-3 rounded text-sm font-bold uppercase tracking-widest hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"><Save className="w-4 h-4" /> Створити</button>
+                            <div className="mb-8">
+                                <label className="text-xs font-bold text-accent uppercase tracking-wide block mb-2">Назва Розділу</label>
+                                <input type="text" required value={categoryTitle} onChange={(e) => setCategoryTitle(e.target.value)} placeholder="Наприклад: Фарбування" className="input-premium" autoFocus />
+                            </div>
+                            <button type="submit" className="btn-primary w-full py-3.5 text-xs">Створити</button>
                         </form>
                     </div>
                 </div>
             )}
+
             {isServiceModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/80 backdrop-blur-sm">
-                    <div className="bg-surface w-full max-w-md rounded-lg border border-accent shadow-2xl p-6 animate-in zoom-in-95 duration-200">
-                        <div className="flex justify-between items-center mb-6"><h3 className="text-xl font-serif text-main">{editingService ? 'Редагування послуги' : 'Нова послуга'}</h3><button onClick={() => setIsServiceModalOpen(false)} className="text-muted hover:text-main"><X className="w-5 h-5" /></button></div>
-                        <form onSubmit={handleServiceSubmit} className="space-y-4">
-                            <div className="space-y-2"><label className="text-xs font-medium text-accent uppercase tracking-wide">Назва послуги</label><input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Наприклад: Корінь (до 2см)" className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none" /></div>
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/90 backdrop-blur-sm animate-in fade-in">
+                    <div className="glass w-full max-w-md rounded-2xl border border-accent/50 shadow-2xl p-8 animate-in zoom-in-95 duration-200">
+                        <div className="flex justify-between items-center mb-8">
+                            <h3 className="text-2xl font-serif text-main">{editingService ? 'Редагування' : 'Нова послуга'}</h3>
+                            <button onClick={() => setIsServiceModalOpen(false)} className="text-muted hover:text-main"><X className="w-6 h-6" /></button>
+                        </div>
+                        <form onSubmit={handleServiceSubmit} className="space-y-6">
+                            <div><label className="text-xs font-bold text-accent uppercase tracking-wide block mb-2">Назва послуги</label><input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Наприклад: Корінь (до 2см)" className="input-premium" /></div>
                              <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2"><label className="text-xs font-medium text-accent uppercase tracking-wide">Ціна (₴)</label><input type="number" required value={price} onChange={(e) => setPrice(e.target.value)} className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none" /></div>
-                                <div className="space-y-2"><label className="text-xs font-medium text-accent uppercase tracking-wide">Тривалість (хв)</label><input type="number" required step="15" value={duration} onChange={(e) => setDuration(e.target.value)} className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none" /></div>
+                                <div><label className="text-xs font-bold text-accent uppercase tracking-wide block mb-2">Ціна (₴)</label><input type="number" required value={price} onChange={(e) => setPrice(e.target.value)} className="input-premium" /></div>
+                                <div><label className="text-xs font-bold text-accent uppercase tracking-wide block mb-2">Тривалість (хв)</label><input type="number" required step="15" value={duration} onChange={(e) => setDuration(e.target.value)} className="input-premium" /></div>
                             </div>
-                            <div className="space-y-2"><label className="text-xs font-medium text-accent uppercase tracking-wide">Опис</label><textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Короткий опис послуги..." className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none h-24 resize-none" /></div>
-                            <div className="pt-4 flex gap-3"><button type="button" onClick={() => setIsServiceModalOpen(false)} className="flex-1 border border-border text-muted py-3 rounded text-sm font-medium hover:bg-surface-soft transition-colors">Скасувати</button><button type="submit" className="flex-1 bg-accent text-primary py-3 rounded text-sm font-bold uppercase tracking-widest hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"><Save className="w-4 h-4" /> Зберегти</button></div>
+                            <div><label className="text-xs font-bold text-accent uppercase tracking-wide block mb-2">Опис</label><textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Короткий опис..." className="input-premium h-24 resize-none" /></div>
+                            <div className="pt-4 flex gap-4 border-t border-border mt-4">
+                                <button type="button" onClick={() => setIsServiceModalOpen(false)} className="flex-1 border border-border text-muted py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-surface-soft transition-colors">Скасувати</button>
+                                <button type="submit" className="flex-1 btn-primary py-3.5 text-xs">Зберегти</button>
+                            </div>
                         </form>
                     </div>
                 </div>
