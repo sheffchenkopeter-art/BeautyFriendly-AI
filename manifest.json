@@ -1,6 +1,8 @@
+
 {
   "short_name": "BeautyFriendly",
   "name": "BeautyFriendly AI - Асистент Перукаря",
+  "id": "/",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/3461/3461980.png",
@@ -13,7 +15,8 @@
       "type": "image/png"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "theme_color": "#101b2a",
   "background_color": "#101b2a",
