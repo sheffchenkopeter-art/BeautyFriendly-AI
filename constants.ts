@@ -25,14 +25,23 @@ export const MOCK_CLIENTS: Client[] = [
   {
     id: '1',
     name: 'Олена Коваль',
+    gender: 'female',
     phone: '+380 50 123 4567',
     notes: 'Любить холодний блонд, чутлива шкіра голови.',
     lastVisit: '2023-10-15',
-    avatarUrl: 'https://ui-avatars.com/api/?name=Олена+Коваль&background=d6b980&color=101b2a'
+    avatarUrl: 'https://ui-avatars.com/api/?name=Олена+Коваль&background=d6b980&color=101b2a',
+    profile: {
+        colorType: 'Літо',
+        hairCondition: 'Пористе, освітлене',
+        faceShape: 'Овал',
+        hairDensity: 'Середня',
+        hairStructure: 'Хвилясте'
+    }
   },
   {
     id: '2',
     name: 'Марина Петренко',
+    gender: 'female',
     phone: '+380 67 987 6543',
     notes: 'Відрощує довжину, тільки кінчики.',
     lastVisit: '2023-11-02',
@@ -41,6 +50,7 @@ export const MOCK_CLIENTS: Client[] = [
   {
     id: '3',
     name: 'Андрій Мельник',
+    gender: 'male',
     phone: '+380 93 555 1212',
     notes: 'Класичний фейд, щомісяця.',
     lastVisit: '2023-11-20',

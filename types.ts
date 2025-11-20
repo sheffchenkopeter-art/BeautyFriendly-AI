@@ -20,6 +20,7 @@ export enum ServiceType {
 export type PaymentMethod = 'cash' | 'card';
 export type TransactionType = 'income' | 'expense';
 export type CalendarDailyView = 'cards' | 'timeline';
+export type Gender = 'male' | 'female'; // New Type
 
 export enum ExpenseCategory {
   RENT = 'Оренда',
@@ -55,14 +56,25 @@ export interface ServiceItem {
   description?: string;
 }
 
+// Detailed profile for female clients
+export interface ClientProfile {
+  colorType: string;        // e.g., 'Зима', 'Літо'
+  hairCondition: string;    // e.g., 'Пористе', 'Скляне', 'Пошкоджене'
+  faceShape: string;        // e.g., 'Овал (Золотий перетин)', 'Круг'
+  hairDensity: string;      // e.g., 'Густе', 'Тонке'
+  hairStructure: string;    // e.g., 'Пряме', 'Кучеряве'
+}
+
 export interface Client {
   id: string;
   name: string;
   phone: string;
+  gender: Gender; // Added gender
   email?: string;
   notes?: string;
   lastVisit?: string;
   avatarUrl?: string;
+  profile?: ClientProfile; // Optional profile data
 }
 
 export interface Appointment {

@@ -1,5 +1,5 @@
-
 import { GoogleGenAI } from "@google/genai";
+import { ClientProfile } from "../types";
 
 // Helper to safely get API Key without crashing the browser if process is undefined
 const getApiKey = (): string | undefined => {
@@ -112,4 +112,72 @@ export const analyzeClientPhoto = async (base64Image: string, prompt: string): P
         console.error("Gemini API Error (Analysis):", error);
         throw error;
     }
-}
+};
+
+export const identifyClientProfile = async (description: string): Promise<Partial<ClientProfile>> => {
+  try {
+    const ai = getClient();
+    const prompt = `
+      Проаналізуй цей опис зовнішності клієнта і визнач його характеристики для анкети перукаря.
+      Опис: "${description}"
+
+      Поверни ТІЛЬКИ JSON об'єкт з такими полями (вибери найбільш відповідне значення зі списку або "Не визначено"):
+      - colorType: "Весна", "Літо", "Осінь", "Зима"
+      - faceShape: "Овал", "Круг", "Квадрат", "Трикутник", "Ромб", "Прямокутник"
+      - hairCondition: "Натуральне", "Фарбоване", "Пористе", "Пошкоджене", "Скляне (Сивина)"
+      - hairDensity: "Тонке", "Середнє", "Густе"
+      - hairStructure: "Пряме", "Хвилясте", "Кучеряве"
+    `;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json"
+      }
+    });
+
+    const jsonText = response.text;
+    if (!jsonText) throw new Error("Empty response");
+    return JSON.parse(jsonText) as Partial<ClientProfile>;
+  } catch (error) {
+    console.error("Gemini API Error (Identify Profile):", error);
+    return {};
+  }
+};
+
+export const generateClientAnalysis = async (name: string, profile: ClientProfile): Promise<string> => {
+    try {
+        const ai = getClient();
+        const prompt = `
+        Проаналізуй профіль клієнта ${name} та надай професійні рекомендації.
+        
+        ДАНІ КЛІЄНТА:
+        - Кольоротип: ${profile.colorType}
+        - Стан волосся: ${profile.hairCondition}
+        - Форма обличчя: ${profile.faceShape}
+        - Густота: ${profile.hairDensity}
+        - Структура: ${profile.hairStructure}
+        
+        ЗАВДАННЯ:
+        1. Запропонуй 2-3 ідеальні відтінки фарбування, які підкреслять кольоротип.
+        2. Порекомендуй форму стрижки, яка скорегує овал обличчя (Золоте січення).
+        3. Напиши протокол догляду з огляду на стан та структуру волосся.
+        
+        Відформатуй відповідь чіткими блоками.
+        `;
+        
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                systemInstruction: SYSTEM_INSTRUCTION,
+                temperature: 0.7,
+            }
+        });
+        return response.text || "Не вдалося згенерувати аналіз.";
+    } catch (error) {
+        console.error("Gemini API Error (Client Analysis):", error);
+        return "Помилка AI аналізу.";
+    }
+};
