@@ -1,14 +1,12 @@
 import { GoogleGenAI } from "@google/genai";
 import { ClientProfile } from "../types";
 
-// Helper to safely get API Key without crashing the browser if process is undefined
+// Helper to safely get API Key
 const getApiKey = (): string | undefined => {
+  // As per guidelines, we use process.env.API_KEY exclusively.
+  // We assume it is configured in the environment.
   try {
-    // Safe check for process.env in various bundler environments
-    // This prevents "ReferenceError: process is not defined"
-    if (typeof process !== 'undefined' && process && process.env && process.env.API_KEY) {
-      return process.env.API_KEY;
-    }
+    return process.env.API_KEY;
   } catch (e) {
     console.warn("Error accessing process.env:", e);
   }
@@ -20,7 +18,7 @@ const getClient = () => {
   
   if (!apiKey) {
     console.error("CRITICAL: API Key is missing. The app cannot contact Gemini.");
-    throw new Error("API Key not found. Please check your environment variables or .env file.");
+    throw new Error("API Key not found. Please ensure process.env.API_KEY is set.");
   }
   
   return new GoogleGenAI({ apiKey });
@@ -137,8 +135,12 @@ export const identifyClientProfile = async (description: string): Promise<Partia
       }
     });
 
-    const jsonText = response.text;
+    let jsonText = response.text;
     if (!jsonText) throw new Error("Empty response");
+    
+    // FIX: Remove markdown code blocks if Gemini adds them
+    jsonText = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
+
     return JSON.parse(jsonText) as Partial<ClientProfile>;
   } catch (error) {
     console.error("Gemini API Error (Identify Profile):", error);
