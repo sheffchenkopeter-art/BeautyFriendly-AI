@@ -2,8 +2,17 @@
 <html lang="uk">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>BeautyFriendly AI - Асистент Перукаря</title>
+    
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#101b2a" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BeautyFriendly">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3461/3461980.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -17,6 +26,7 @@
         font-family: 'Inter', sans-serif;
         background-color: var(--color-bg);
         color: #f1f5f9;
+        overscroll-behavior-y: none; /* Prevents pull-to-refresh on mobile */
       }
       h1, h2, h3, h4, h5, h6 {
         font-family: 'Playfair Display', serif;
@@ -35,6 +45,11 @@
       }
       ::-webkit-scrollbar-thumb:hover {
         background: #d6b980; 
+      }
+      
+      /* PWA Safe Area for iPhone X+ */
+      .safe-area-pb {
+        padding-bottom: env(safe-area-inset-bottom);
       }
     </style>
   <script type="importmap">
