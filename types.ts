@@ -41,8 +41,14 @@ export interface User {
   subscriptionPlan?: 'start' | 'pro' | 'premium';
 }
 
+export interface ServiceCategory {
+  id: string;
+  title: string;
+}
+
 export interface ServiceItem {
   id: string;
+  categoryId: string; // Link to category
   title: string;
   price: number;
   duration: number; // in minutes

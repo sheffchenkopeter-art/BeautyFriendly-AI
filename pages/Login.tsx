@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Lock, Mail, ArrowRight, Loader2, User } from 'lucide-react';
 
@@ -33,7 +32,8 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
           <div className="w-24 h-24 rounded-full border-[3px] border-[#d6b980] flex items-center justify-center mx-auto mb-6 shadow-[0_0_25px_rgba(214,185,128,0.15)] bg-gradient-to-b from-[#d6b980]/10 to-transparent">
             <span className="text-5xl font-serif text-[#d6b980] tracking-tighter font-medium italic ml-[-2px]">BF</span>
           </div>
-          <h1 className="text-2xl font-serif text-[#d6b980] mb-2 uppercase tracking-[0.2em]">Beauty Friendly</h1>
+          {/* Responsive text sizing to prevent overflow on small screens */}
+          <h1 className="text-xl md:text-2xl font-serif text-[#d6b980] mb-2 uppercase tracking-widest">Beauty Friendly</h1>
           <p className="text-slate-500 text-xs uppercase tracking-widest mt-3">AI Assistant for Stylists</p>
         </div>
 

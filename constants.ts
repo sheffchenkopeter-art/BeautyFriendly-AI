@@ -1,17 +1,24 @@
 
-import { Client, Appointment, ServiceType, StyleTrend, WorkSchedule, WalletState, ServiceItem } from './types';
+import { Client, Appointment, ServiceType, StyleTrend, WorkSchedule, WalletState, ServiceItem, ServiceCategory } from './types';
 
 export const INITIAL_WALLET_STATE: WalletState = {
   cash: 0, 
   card: 0 
 };
 
+export const DEFAULT_CATEGORIES: ServiceCategory[] = [
+  { id: 'c1', title: 'Стрижки' },
+  { id: 'c2', title: 'Фарбування' },
+  { id: 'c3', title: 'Укладки та Догляд' }
+];
+
 export const DEFAULT_SERVICES: ServiceItem[] = [
-  { id: 's1', title: 'Жіноча стрижка', price: 500, duration: 60, description: 'Миття, стрижка, укладка' },
-  { id: 's2', title: 'Чоловіча стрижка', price: 400, duration: 45, description: 'Стрижка машинкою та ножицями' },
-  { id: 's3', title: 'Фарбування (корінь)', price: 1200, duration: 90, description: 'Фарбування відрослих коренів' },
-  { id: 's4', title: 'Складне фарбування', price: 3500, duration: 240, description: 'AirTouch, Balayage, Shatush' },
-  { id: 's5', title: 'Укладка', price: 600, duration: 60, description: 'Вечірня або денна укладка' },
+  { id: 's1', categoryId: 'c1', title: 'Жіноча стрижка', price: 500, duration: 60, description: 'Миття, стрижка, укладка' },
+  { id: 's2', categoryId: 'c1', title: 'Чоловіча стрижка', price: 400, duration: 45, description: 'Стрижка машинкою та ножицями' },
+  { id: 's3', categoryId: 'c2', title: 'Корінь (до 2см)', price: 1200, duration: 90, description: 'Фарбування відрослих коренів' },
+  { id: 's4', categoryId: 'c2', title: 'В один тон', price: 1800, duration: 120, description: 'Фарбування по всій довжині' },
+  { id: 's5', categoryId: 'c2', title: 'Складне фарбування', price: 3500, duration: 240, description: 'AirTouch, Balayage, Shatush' },
+  { id: 's6', categoryId: 'c3', title: 'Вечірня укладка', price: 800, duration: 60, description: 'Локони або зібрана зачіска' },
 ];
 
 export const MOCK_CLIENTS: Client[] = [
@@ -47,7 +54,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     clientId: '1',
     clientName: 'Олена Коваль',
     date: new Date(new Date().setHours(10, 0, 0, 0)), // Today 10:00
-    service: 'Фарбування (корінь)',
+    service: 'Корінь (до 2см)',
     durationMinutes: 120,
     price: 2500,
     status: 'scheduled'
@@ -67,7 +74,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     clientId: '2',
     clientName: 'Марина Петренко',
     date: new Date(new Date().setHours(15, 0, 0, 0)), // Today 15:00
-    service: 'Укладка',
+    service: 'Вечірня укладка',
     durationMinutes: 60,
     price: 800,
     status: 'scheduled'

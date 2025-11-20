@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Calendar, Users, Sparkles, LayoutDashboard, LogOut, Settings, BarChart3, Scissors } from 'lucide-react';
 import { AppView, User } from '../types';
@@ -21,6 +20,15 @@ export const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChang
     { id: AppView.SETTINGS, icon: Settings, label: 'Налаштування' },
   ];
 
+  // Mobile items: Prioritize Analytics over Services for daily usage
+  const mobileNavItems = [
+    navItems[0], // Dashboard
+    navItems[1], // Calendar
+    navItems[3], // AI Stylist (Center)
+    navItems[5], // Analytics (Replaces Services/Clients for better business tracking)
+    navItems[4], // Clients
+  ];
+
   return (
     <>
       {/* Desktop Sidebar */}
@@ -30,7 +38,10 @@ export const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChang
           <div className="w-10 h-10 rounded-full border-2 border-[#d6b980] flex items-center justify-center bg-[#101b2a] shrink-0 shadow-[0_0_10px_rgba(214,185,128,0.1)]">
              <span className="text-lg font-serif text-[#d6b980] tracking-tighter italic font-bold ml-[-1px]">BF</span>
           </div>
-          <h1 className="text-lg font-bold tracking-widest font-serif text-[#d6b980] uppercase whitespace-nowrap">Beauty Friendly</h1>
+          {/* Fixed: Adjusted text size and tracking to prevent overflow */}
+          <h1 className="text-base font-bold tracking-wide font-serif text-[#d6b980] uppercase leading-tight">
+            Beauty Friendly
+          </h1>
         </div>
         
         <nav className="space-y-2 flex-1">
@@ -80,7 +91,7 @@ export const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChang
         // Adding extra padding bottom to lift icons above the safe area swipe indicator
         style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}
       >
-        {navItems.slice(0, 5).map((item) => (
+        {mobileNavItems.map((item) => (
           <button
             key={item.id}
             onClick={() => onViewChange(item.id)}

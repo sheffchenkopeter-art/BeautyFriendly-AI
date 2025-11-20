@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { User, Bell, Shield, CreditCard, ChevronRight, Moon, LogOut, Save, Check, Calendar, Clock } from 'lucide-react';
+import { User, Bell, Shield, CreditCard, ChevronRight, Moon, LogOut, Save, Check, Calendar, Clock, Scissors } from 'lucide-react';
 import { User as UserType, WorkSchedule, CalendarDailyView } from '../types';
 
 interface SettingsProps {
@@ -11,13 +11,19 @@ interface SettingsProps {
     onUpdateSchedule: (schedule: WorkSchedule) => void;
     calendarDailyView: CalendarDailyView;
     onUpdateCalendarView: (view: CalendarDailyView) => void;
+    onNavigateToServices: () => void; // New prop
 }
 
 const DAYS_OF_WEEK = [
   'Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'
 ];
 
-export const Settings: React.FC<SettingsProps> = ({ user, onUpdateUser, onLogout, workSchedule, onUpdateSchedule, calendarDailyView, onUpdateCalendarView }) => {
+export const Settings: React.FC<SettingsProps> = ({ 
+    user, onUpdateUser, onLogout, 
+    workSchedule, onUpdateSchedule,
+    calendarDailyView, onUpdateCalendarView,
+    onNavigateToServices
+}) => {
     const [name, setName] = useState(user.name);
     const [isSaved, setIsSaved] = useState(false);
     const [localSchedule, setLocalSchedule] = useState<WorkSchedule>(workSchedule);
@@ -66,6 +72,20 @@ export const Settings: React.FC<SettingsProps> = ({ user, onUpdateUser, onLogout
                 {/* Main Settings Column */}
                 <div className="lg:col-span-2 space-y-6">
                     
+                     {/* Services Management Quick Link (Requested feature) */}
+                     <section className="bg-[#1a2736] rounded border border-[#2a3c52] p-6 flex items-center justify-between group hover:border-[#d6b980] transition-colors cursor-pointer" onClick={onNavigateToServices}>
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-[#101b2a] border border-[#d6b980]/30 flex items-center justify-center">
+                                <Scissors className="w-5 h-5 text-[#d6b980]" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-serif text-white group-hover:text-[#d6b980] transition-colors">Керування Послугами</h3>
+                                <p className="text-xs text-slate-500">Налаштування прайс-листа та категорій послуг</p>
+                            </div>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-[#d6b980]" />
+                    </section>
+
                     {/* Profile Section */}
                     <section className="bg-[#1a2736] rounded border border-[#2a3c52] p-6">
                         <div className="flex items-center gap-3 mb-6">

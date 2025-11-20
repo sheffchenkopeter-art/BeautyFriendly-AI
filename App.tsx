@@ -4,14 +4,14 @@ import { Navigation } from './components/Navigation';
 import { Dashboard } from './pages/Dashboard';
 import { CalendarView } from './pages/CalendarView';
 import { ClientsView } from './pages/ClientsView';
-import { ServicesView } from './pages/ServicesView'; // New
+import { ServicesView } from './pages/ServicesView';
 import { AIStylist } from './pages/AIStylist';
 import { Login } from './pages/Login';
 import { Subscription } from './pages/Subscription';
 import { Settings } from './pages/Settings';
 import { Analytics } from './pages/Analytics';
-import { AppView, User, Client, Appointment, WorkSchedule, WalletState, Transaction, PaymentMethod, ExpenseCategory, CalendarDailyView, ServiceItem } from './types';
-import { MOCK_CLIENTS, MOCK_APPOINTMENTS, DEFAULT_SCHEDULE, INITIAL_WALLET_STATE, DEFAULT_SERVICES } from './constants';
+import { AppView, User, Client, Appointment, WorkSchedule, WalletState, Transaction, PaymentMethod, ExpenseCategory, CalendarDailyView, ServiceItem, ServiceCategory } from './types';
+import { MOCK_CLIENTS, MOCK_APPOINTMENTS, DEFAULT_SCHEDULE, INITIAL_WALLET_STATE, DEFAULT_SERVICES, DEFAULT_CATEGORIES } from './constants';
 
 function App() {
   const [currentView, setCurrentView] = useState<AppView>(AppView.DASHBOARD);
@@ -22,7 +22,11 @@ function App() {
 
   // Data State
   const [clients, setClients] = useState<Client[]>(MOCK_CLIENTS);
-  const [services, setServices] = useState<ServiceItem[]>(DEFAULT_SERVICES); // Services State
+  
+  // Services State
+  const [serviceCategories, setServiceCategories] = useState<ServiceCategory[]>(DEFAULT_CATEGORIES);
+  const [services, setServices] = useState<ServiceItem[]>(DEFAULT_SERVICES); 
+  
   const [appointments, setAppointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
   const [workSchedule, setWorkSchedule] = useState<WorkSchedule>(DEFAULT_SCHEDULE);
   
@@ -97,6 +101,17 @@ function App() {
   // --- Data Handlers ---
   const handleAddClient = (newClient: Client) => {
     setClients(prev => [...prev, newClient]);
+  };
+
+  // Category Handlers
+  const handleAddCategory = (title: string) => {
+    setServiceCategories(prev => [...prev, { id: Date.now().toString(), title }]);
+  };
+
+  const handleDeleteCategory = (id: string) => {
+    // Delete category and all its services
+    setServiceCategories(prev => prev.filter(c => c.id !== id));
+    setServices(prev => prev.filter(s => s.categoryId !== id));
   };
 
   // Services Handlers
@@ -178,7 +193,8 @@ function App() {
         return <CalendarView 
                   appointments={appointments} 
                   clients={clients} 
-                  services={services} // Pass services
+                  services={services}
+                  categories={serviceCategories} // Pass categories
                   onAddAppointment={handleAddAppointment}
                   workSchedule={workSchedule}
                   onCloseAppointment={handleCloseAppointment}
@@ -191,7 +207,10 @@ function App() {
         return <ClientsView clients={clients} onAddClient={handleAddClient} />;
       case AppView.SERVICES:
         return <ServicesView 
+                  categories={serviceCategories}
                   services={services} 
+                  onAddCategory={handleAddCategory}
+                  onDeleteCategory={handleDeleteCategory}
                   onAddService={handleAddService} 
                   onUpdateService={handleUpdateService}
                   onDeleteService={handleDeleteService}
@@ -213,6 +232,7 @@ function App() {
                   onUpdateSchedule={setWorkSchedule}
                   calendarDailyView={calendarDailyView}
                   onUpdateCalendarView={setCalendarDailyView}
+                  onNavigateToServices={() => setCurrentView(AppView.SERVICES)} // Handler for Settings nav
                />;
       default:
         return <Dashboard 

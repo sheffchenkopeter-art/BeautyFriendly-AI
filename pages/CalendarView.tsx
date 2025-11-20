@@ -7,12 +7,13 @@ import {
 } from 'date-fns';
 import { uk } from 'date-fns/locale';
 import { Scissors, Plus, X, Save, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, LayoutList, Grid, Columns, AlertCircle, CheckCircle, CreditCard, Wallet, Edit2, Trash2, AlertTriangle, List, AlignLeft } from 'lucide-react';
-import { Appointment, Client, ServiceType, WorkSchedule, PaymentMethod, CalendarDailyView, ServiceItem } from '../types';
+import { Appointment, Client, ServiceType, WorkSchedule, PaymentMethod, CalendarDailyView, ServiceItem, ServiceCategory } from '../types';
 
 interface CalendarViewProps {
     appointments: Appointment[];
     clients: Client[];
-    services: ServiceItem[]; // Added dynamic services
+    services: ServiceItem[];
+    categories: ServiceCategory[]; // Added categories
     onAddAppointment: (appointment: Appointment) => void;
     workSchedule: WorkSchedule;
     onCloseAppointment: (id: string, method: PaymentMethod, finalPrice: number) => void;
@@ -28,6 +29,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     appointments, 
     clients, 
     services,
+    categories,
     onAddAppointment, 
     workSchedule, 
     onCloseAppointment,
@@ -56,7 +58,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   const [formClientId, setFormClientId] = useState('');
   const [formDate, setFormDate] = useState('');
   const [formTime, setFormTime] = useState('10:00');
-  const [formService, setFormService] = useState(''); // String now
+  const [formService, setFormService] = useState(''); 
   const [formPrice, setFormPrice] = useState('0');
   const [formDuration, setFormDuration] = useState('60');
 
@@ -204,6 +206,9 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       return formMins >= startMins && formMins < endMins;
   };
 
+  // ... (Render helper functions for Header, Timeline, Week, Month omitted for brevity but assumed preserved) ...
+  // ... Re-using the exact same render structure as before ...
+
   const renderHeader = () => (
     <div className="flex flex-col xl:flex-row justify-between items-center gap-4 mb-6 bg-[#1a2736] p-4 rounded border border-[#2a3c52]">
       <div className="flex items-center gap-4 w-full xl:w-auto justify-between xl:justify-start">
@@ -248,7 +253,6 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             ))}
         </div>
 
-        {/* Separate Toggle for Daily View Mode (Cards/Timeline) - Only visible on Day View */}
         {viewMode === 'day' && (
              <div className="flex bg-[#101b2a] p-1 rounded border border-[#2a3c52]">
                 <button
@@ -689,9 +693,19 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                             className="w-full bg-[#101b2a] border border-[#2a3c52] rounded px-4 py-3 text-white focus:border-[#d6b980] focus:outline-none"
                         >
                             <option value="" disabled>Оберіть послугу</option>
-                            {services.map(service => (
-                                <option key={service.id} value={service.title}>{service.title} ({service.duration} хв - ₴{service.price})</option>
-                            ))}
+                            {categories.map(category => {
+                                const categoryServices = services.filter(s => s.categoryId === category.id);
+                                if (categoryServices.length === 0) return null;
+                                return (
+                                    <optgroup key={category.id} label={category.title} className="bg-[#1a2736] text-white">
+                                        {categoryServices.map(service => (
+                                            <option key={service.id} value={service.title}>
+                                                {service.title} ({service.duration} хв - ₴{service.price})
+                                            </option>
+                                        ))}
+                                    </optgroup>
+                                );
+                            })}
                         </select>
                     </div>
 
@@ -738,148 +752,34 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             </div>
         </div>
       )}
-
-      {/* Reschedule Modal and Checkout Modal logic remains the same as before... */}
-      {/* (Keeping the rest of the modal code to ensure functionality isn't broken, just updated within the CalendarView component) */}
+      
+      {/* Reschedule Modal and Checkout Modal logic ... (re-rendered here to ensure file completeness) */}
+      {/* (For brevity, assuming the existing modals are here. The key change above was the select>optgroup implementation) */}
+      
       {editApp && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0d1623]/80 backdrop-blur-sm">
-              <div className="bg-[#1a2736] w-full max-w-md rounded-lg border border-[#d6b980] shadow-2xl p-6 animate-in zoom-in-95 duration-200 relative">
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-serif text-white">Перенесення візиту</h3>
-                    <button onClick={() => setEditApp(null)} className="text-slate-400 hover:text-white">
-                        <X className="w-5 h-5" />
-                    </button>
-                </div>
-                
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0d1623]/80 backdrop-blur-sm">
+             <div className="bg-[#1a2736] w-full max-w-md rounded-lg border border-[#d6b980] shadow-2xl p-6 animate-in zoom-in-95 duration-200 relative">
+                <div className="flex justify-between items-center mb-6"><h3 className="text-xl font-serif text-white">Перенесення візиту</h3><button onClick={() => setEditApp(null)} className="text-slate-400 hover:text-white"><X className="w-5 h-5" /></button></div>
                 <div className="space-y-4">
-                    <p className="text-sm text-slate-300 bg-[#101b2a] p-3 rounded border border-[#2a3c52]">
-                        Клієнт: <span className="text-white font-medium">{editApp.clientName}</span><br/>
-                        Послуга: <span className="text-white font-medium">{editApp.service}</span>
-                    </p>
-
+                    <p className="text-sm text-slate-300 bg-[#101b2a] p-3 rounded border border-[#2a3c52]">Клієнт: <span className="text-white font-medium">{editApp.clientName}</span><br/>Послуга: <span className="text-white font-medium">{editApp.service}</span></p>
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-xs font-medium text-[#d6b980] uppercase tracking-wide">Нова Дата</label>
-                            <input 
-                                type="date"
-                                value={editDate}
-                                onChange={(e) => setEditDate(e.target.value)}
-                                className="w-full bg-[#101b2a] border border-[#2a3c52] rounded px-4 py-3 text-white focus:border-[#d6b980] focus:outline-none [color-scheme:dark]"
-                            />
-                        </div>
-                         <div className="space-y-2">
-                            <label className="text-xs font-medium text-[#d6b980] uppercase tracking-wide">Новий Час</label>
-                            <input 
-                                type="time"
-                                value={editTime}
-                                onChange={(e) => setEditTime(e.target.value)}
-                                className="w-full bg-[#101b2a] border border-[#2a3c52] rounded px-4 py-3 text-white focus:border-[#d6b980] focus:outline-none [color-scheme:dark]"
-                            />
-                        </div>
+                        <div className="space-y-2"><label className="text-xs font-medium text-[#d6b980] uppercase tracking-wide">Нова Дата</label><input type="date" value={editDate} onChange={(e) => setEditDate(e.target.value)} className="w-full bg-[#101b2a] border border-[#2a3c52] rounded px-4 py-3 text-white focus:border-[#d6b980] focus:outline-none [color-scheme:dark]" /></div>
+                        <div className="space-y-2"><label className="text-xs font-medium text-[#d6b980] uppercase tracking-wide">Новий Час</label><input type="time" value={editTime} onChange={(e) => setEditTime(e.target.value)} className="w-full bg-[#101b2a] border border-[#2a3c52] rounded px-4 py-3 text-white focus:border-[#d6b980] focus:outline-none [color-scheme:dark]" /></div>
                     </div>
-
-                    <div className="space-y-2">
-                        <label className="text-xs font-medium text-[#d6b980] uppercase tracking-wide">Тривалість (хв)</label>
-                        <input 
-                            type="number"
-                            step="15"
-                            value={editDuration}
-                            onChange={(e) => setEditDuration(e.target.value)}
-                            className="w-full bg-[#101b2a] border border-[#2a3c52] rounded px-4 py-3 text-white focus:border-[#d6b980] focus:outline-none"
-                        />
-                    </div>
+                    <div className="space-y-2"><label className="text-xs font-medium text-[#d6b980] uppercase tracking-wide">Тривалість (хв)</label><input type="number" step="15" value={editDuration} onChange={(e) => setEditDuration(e.target.value)} className="w-full bg-[#101b2a] border border-[#2a3c52] rounded px-4 py-3 text-white focus:border-[#d6b980] focus:outline-none" /></div>
                 </div>
-
-                {showConflictWarning && (
-                    <div className="absolute inset-0 bg-[#0d1623]/90 z-10 flex flex-col items-center justify-center p-8 text-center animate-in fade-in">
-                        <AlertTriangle className="w-12 h-12 text-[#d6b980] mb-4" />
-                        <h4 className="text-xl text-white font-serif mb-2">Конфлікт у розкладі</h4>
-                        <p className="text-sm text-slate-400 mb-6">
-                            Обраний час перетинається з іншим записом. Ви впевнені, що хочете перенести візит саме на цей час?
-                        </p>
-                        <div className="flex gap-3 w-full">
-                            <button 
-                                onClick={() => setShowConflictWarning(false)}
-                                className="flex-1 border border-[#2a3c52] text-white py-3 rounded text-xs font-bold uppercase tracking-widest hover:bg-[#2a3c52]"
-                            >
-                                Змінити час
-                            </button>
-                            <button 
-                                onClick={() => handleSaveEdit(true)}
-                                className="flex-1 bg-[#d6b980] text-[#101b2a] py-3 rounded text-xs font-bold uppercase tracking-widest hover:bg-[#c2a56a]"
-                            >
-                                Все одно зберегти
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                <div className="pt-4 flex gap-3">
-                     <button 
-                        onClick={() => setEditApp(null)}
-                        className="flex-1 border border-[#2a3c52] text-slate-300 py-3 rounded text-sm font-medium hover:bg-[#2a3c52] transition-colors"
-                    >
-                        Скасувати
-                    </button>
-                    <button 
-                        onClick={() => handleSaveEdit(false)}
-                        className="flex-1 bg-[#d6b980] text-[#101b2a] py-3 rounded text-sm font-bold uppercase tracking-widest hover:bg-[#c2a56a] transition-colors flex items-center justify-center gap-2"
-                    >
-                        <Save className="w-4 h-4" /> Зберегти зміни
-                    </button>
-                </div>
+                {showConflictWarning && (<div className="absolute inset-0 bg-[#0d1623]/90 z-10 flex flex-col items-center justify-center p-8 text-center animate-in fade-in"><AlertTriangle className="w-12 h-12 text-[#d6b980] mb-4" /><h4 className="text-xl text-white font-serif mb-2">Конфлікт у розкладі</h4><p className="text-sm text-slate-400 mb-6">Обраний час перетинається з іншим записом. Ви впевнені, що хочете перенести візит саме на цей час?</p><div className="flex gap-3 w-full"><button onClick={() => setShowConflictWarning(false)} className="flex-1 border border-[#2a3c52] text-white py-3 rounded text-xs font-bold uppercase tracking-widest hover:bg-[#2a3c52]">Змінити час</button><button onClick={() => handleSaveEdit(true)} className="flex-1 bg-[#d6b980] text-[#101b2a] py-3 rounded text-xs font-bold uppercase tracking-widest hover:bg-[#c2a56a]">Все одно зберегти</button></div></div>)}
+                <div className="pt-4 flex gap-3"><button onClick={() => setEditApp(null)} className="flex-1 border border-[#2a3c52] text-slate-300 py-3 rounded text-sm font-medium hover:bg-[#2a3c52] transition-colors">Скасувати</button><button onClick={() => handleSaveEdit(false)} className="flex-1 bg-[#d6b980] text-[#101b2a] py-3 rounded text-sm font-bold uppercase tracking-widest hover:bg-[#c2a56a] transition-colors flex items-center justify-center gap-2"><Save className="w-4 h-4" /> Зберегти зміни</button></div>
               </div>
           </div>
       )}
-
       {checkoutApp && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#0d1623]/90 backdrop-blur-sm">
             <div className="bg-[#1a2736] w-full max-w-sm rounded-lg border border-[#d6b980] shadow-2xl p-6 animate-in zoom-in-95 duration-200">
-                 <div className="text-center mb-6">
-                     <div className="w-16 h-16 rounded-full bg-[#d6b980]/10 flex items-center justify-center mx-auto mb-4 border border-[#d6b980]">
-                         <CheckCircle className="w-8 h-8 text-[#d6b980]" />
-                     </div>
-                     <h3 className="text-xl font-serif text-white mb-1">Завершення візиту</h3>
-                     <p className="text-slate-400 text-sm">{checkoutApp.clientName} — {checkoutApp.service}</p>
-                 </div>
-
-                 <div className="bg-[#101b2a] p-4 rounded border border-[#2a3c52] mb-6 text-center relative group">
-                     <div className="absolute right-2 top-2 text-slate-500">
-                        <Edit2 className="w-3 h-3" />
-                     </div>
-                     <span className="text-xs uppercase tracking-widest text-slate-500 block mb-1">До сплати (₴)</span>
-                     <input 
-                        type="number"
-                        value={checkoutPrice}
-                        onChange={(e) => setCheckoutPrice(e.target.value)}
-                        className="w-full bg-transparent text-3xl font-serif text-white text-center focus:outline-none border-b border-[#d6b980]/30 focus:border-[#d6b980] pb-1 transition-colors"
-                     />
-                 </div>
-
-                 <div className="space-y-3">
-                     <p className="text-xs uppercase tracking-widest text-[#d6b980] text-center mb-2">Оберіть метод оплати</p>
-                     <button 
-                        onClick={() => handleCheckout('cash')}
-                        className="w-full py-3 border border-[#2a3c52] hover:border-[#d6b980] hover:bg-[#101b2a] rounded flex items-center justify-center gap-3 text-white transition-all group"
-                     >
-                         <Wallet className="w-5 h-5 text-slate-400 group-hover:text-[#d6b980]" />
-                         Готівка
-                     </button>
-                     <button 
-                        onClick={() => handleCheckout('card')}
-                        className="w-full py-3 border border-[#2a3c52] hover:border-[#d6b980] hover:bg-[#101b2a] rounded flex items-center justify-center gap-3 text-white transition-all group"
-                     >
-                         <CreditCard className="w-5 h-5 text-slate-400 group-hover:text-[#d6b980]" />
-                         Картка (Термінал)
-                     </button>
-                 </div>
-
-                 <button 
-                    onClick={() => setCheckoutApp(null)}
-                    className="mt-6 w-full text-xs text-slate-500 hover:text-white py-2"
-                 >
-                     Скасувати
-                 </button>
+                 <div className="text-center mb-6"><div className="w-16 h-16 rounded-full bg-[#d6b980]/10 flex items-center justify-center mx-auto mb-4 border border-[#d6b980]"><CheckCircle className="w-8 h-8 text-[#d6b980]" /></div><h3 className="text-xl font-serif text-white mb-1">Завершення візиту</h3><p className="text-slate-400 text-sm">{checkoutApp.clientName} — {checkoutApp.service}</p></div>
+                 <div className="bg-[#101b2a] p-4 rounded border border-[#2a3c52] mb-6 text-center relative group"><div className="absolute right-2 top-2 text-slate-500"><Edit2 className="w-3 h-3" /></div><span className="text-xs uppercase tracking-widest text-slate-500 block mb-1">До сплати (₴)</span><input type="number" value={checkoutPrice} onChange={(e) => setCheckoutPrice(e.target.value)} className="w-full bg-transparent text-3xl font-serif text-white text-center focus:outline-none border-b border-[#d6b980]/30 focus:border-[#d6b980] pb-1 transition-colors" /></div>
+                 <div className="space-y-3"><p className="text-xs uppercase tracking-widest text-[#d6b980] text-center mb-2">Оберіть метод оплати</p><button onClick={() => handleCheckout('cash')} className="w-full py-3 border border-[#2a3c52] hover:border-[#d6b980] hover:bg-[#101b2a] rounded flex items-center justify-center gap-3 text-white transition-all group"><Wallet className="w-5 h-5 text-slate-400 group-hover:text-[#d6b980]" />Готівка</button><button onClick={() => handleCheckout('card')} className="w-full py-3 border border-[#2a3c52] hover:border-[#d6b980] hover:bg-[#101b2a] rounded flex items-center justify-center gap-3 text-white transition-all group"><CreditCard className="w-5 h-5 text-slate-400 group-hover:text-[#d6b980]" />Картка (Термінал)</button></div>
+                 <button onClick={() => setCheckoutApp(null)} className="mt-6 w-full text-xs text-slate-500 hover:text-white py-2">Скасувати</button>
             </div>
         </div>
       )}
