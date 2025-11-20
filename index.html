@@ -5,26 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BeautyFriendly AI - Асистент Перукаря</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+      :root {
+        --color-bg: #101b2a;
+        --color-card: #1a2736;
+        --color-gold: #d6b980;
+        --color-gold-hover: #c2a56a;
+      }
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #f8fafc;
+        background-color: var(--color-bg);
+        color: #f1f5f9;
       }
-      /* Custom scrollbar for cleaner look */
+      h1, h2, h3, h4, h5, h6 {
+        font-family: 'Playfair Display', serif;
+      }
+      /* Custom scrollbar */
       ::-webkit-scrollbar {
         width: 6px;
         height: 6px;
       }
       ::-webkit-scrollbar-track {
-        background: transparent; 
+        background: #101b2a; 
       }
       ::-webkit-scrollbar-thumb {
-        background: #cbd5e1; 
+        background: #334155; 
         border-radius: 3px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8; 
+        background: #d6b980; 
       }
     </style>
   <script type="importmap">

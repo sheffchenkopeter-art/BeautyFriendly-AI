@@ -4,6 +4,7 @@ export enum AppView {
   CALENDAR = 'CALENDAR',
   CLIENTS = 'CLIENTS',
   AI_STYLIST = 'AI_STYLIST',
+  SETTINGS = 'SETTINGS',
 }
 
 export enum ServiceType {

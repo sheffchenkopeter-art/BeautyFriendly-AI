@@ -13,68 +13,68 @@ export const Dashboard: React.FC<DashboardProps> = ({ onChangeView }) => {
 
   return (
     <div className="space-y-8 pb-24 md:pb-8">
-      <header>
-        <h2 className="text-3xl font-bold text-slate-900">Привіт, Маріє! 👋</h2>
-        <p className="text-slate-500 mt-1">Ось огляд твого дня та нові тренди.</p>
+      <header className="border-b border-[#1e2d3d] pb-6">
+        <h2 className="text-3xl font-bold text-[#d6b980] mb-2">Доброго дня, Маріє.</h2>
+        <p className="text-slate-400 font-light">Ваш професійний огляд на сьогодні.</p>
       </header>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-          <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center mb-3">
-            <CalendarIcon className="w-5 h-5 text-blue-500" />
+        <div className="bg-[#1a2736] p-5 rounded-lg border border-[#2a3c52] shadow-lg hover:border-[#d6b980]/30 transition-colors">
+          <div className="flex items-start justify-between mb-4">
+             <p className="text-slate-400 text-xs uppercase tracking-widest">Записів</p>
+             <CalendarIcon className="w-4 h-4 text-[#d6b980]" />
           </div>
-          <p className="text-slate-500 text-sm">Записів сьогодні</p>
-          <p className="text-2xl font-bold text-slate-900">{todayAppointments.length}</p>
+          <p className="text-3xl font-serif text-white">{todayAppointments.length}</p>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-          <div className="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center mb-3">
-            <DollarSign className="w-5 h-5 text-green-500" />
+        <div className="bg-[#1a2736] p-5 rounded-lg border border-[#2a3c52] shadow-lg hover:border-[#d6b980]/30 transition-colors">
+          <div className="flex items-start justify-between mb-4">
+             <p className="text-slate-400 text-xs uppercase tracking-widest">Дохід</p>
+             <DollarSign className="w-4 h-4 text-[#d6b980]" />
           </div>
-          <p className="text-slate-500 text-sm">Дохід (прогноз)</p>
-          <p className="text-2xl font-bold text-slate-900">₴{totalRevenue}</p>
+          <p className="text-3xl font-serif text-white">₴{totalRevenue}</p>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-           <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center mb-3">
-            <Clock className="w-5 h-5 text-purple-500" />
+        <div className="bg-[#1a2736] p-5 rounded-lg border border-[#2a3c52] shadow-lg hover:border-[#d6b980]/30 transition-colors">
+          <div className="flex items-start justify-between mb-4">
+             <p className="text-slate-400 text-xs uppercase tracking-widest">Години</p>
+             <Clock className="w-4 h-4 text-[#d6b980]" />
           </div>
-          <p className="text-slate-500 text-sm">Робочі години</p>
-          <p className="text-2xl font-bold text-slate-900">6.5</p>
+          <p className="text-3xl font-serif text-white">6.5</p>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-          <div className="w-10 h-10 bg-orange-50 rounded-full flex items-center justify-center mb-3">
-            <TrendingUp className="w-5 h-5 text-orange-500" />
+        <div className="bg-[#1a2736] p-5 rounded-lg border border-[#2a3c52] shadow-lg hover:border-[#d6b980]/30 transition-colors">
+          <div className="flex items-start justify-between mb-4">
+             <p className="text-slate-400 text-xs uppercase tracking-widest">Клієнти</p>
+             <TrendingUp className="w-4 h-4 text-[#d6b980]" />
           </div>
-          <p className="text-slate-500 text-sm">Клієнтська база</p>
-          <p className="text-2xl font-bold text-slate-900">+3</p>
+          <p className="text-3xl font-serif text-white">+3</p>
         </div>
       </div>
 
       {/* Today's Schedule Preview */}
       <section>
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-bold text-slate-900">Розклад на сьогодні</h3>
+        <div className="flex justify-between items-end mb-6">
+          <h3 className="text-xl font-serif text-white">Розклад</h3>
           <button 
             onClick={() => onChangeView(AppView.CALENDAR)}
-            className="text-purple-600 text-sm font-medium flex items-center gap-1 hover:text-purple-700"
+            className="text-[#d6b980] text-xs uppercase tracking-widest hover:text-white transition-colors flex items-center gap-2"
           >
-            Все <ArrowRight className="w-4 h-4" />
+            Весь календар <ArrowRight className="w-3 h-3" />
           </button>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm divide-y divide-slate-100">
+        <div className="bg-[#1a2736] rounded-lg border border-[#2a3c52] divide-y divide-[#2a3c52]">
           {todayAppointments.slice(0, 3).map((apt) => (
-            <div key={apt.id} className="p-4 flex items-center gap-4">
-              <div className="flex flex-col items-center justify-center w-14 h-14 bg-slate-50 rounded-xl text-slate-900">
-                <span className="text-xs font-bold uppercase">{apt.date.toLocaleString('uk-UA', { weekday: 'short' })}</span>
-                <span className="text-lg font-bold">{apt.date.getDate()}</span>
+            <div key={apt.id} className="p-5 flex items-center gap-5 hover:bg-[#233040] transition-colors">
+              <div className="flex flex-col items-center justify-center w-14 h-14 bg-[#101b2a] rounded border border-[#2a3c52] text-[#d6b980]">
+                <span className="text-[10px] font-bold uppercase">{apt.date.toLocaleString('uk-UA', { weekday: 'short' })}</span>
+                <span className="text-lg font-serif">{apt.date.getDate()}</span>
               </div>
               <div className="flex-1">
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-center">
                   <div>
-                    <h4 className="font-bold text-slate-900">{apt.clientName}</h4>
-                    <p className="text-sm text-slate-500">{apt.service} • {apt.durationMinutes} хв</p>
+                    <h4 className="font-serif text-lg text-white mb-1">{apt.clientName}</h4>
+                    <p className="text-xs text-slate-400 uppercase tracking-wide">{apt.service} • {apt.durationMinutes} хв</p>
                   </div>
-                  <span className="text-sm font-bold text-purple-600">
+                  <span className="text-sm font-medium text-[#d6b980] bg-[#d6b980]/10 px-3 py-1 rounded-full">
                     {apt.date.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
@@ -86,22 +86,22 @@ export const Dashboard: React.FC<DashboardProps> = ({ onChangeView }) => {
 
       {/* Trends Section */}
       <section>
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-bold text-slate-900">Тренди тижня</h3>
+        <div className="flex justify-between items-end mb-6">
+          <h3 className="text-xl font-serif text-white">Актуальні Тренди</h3>
           <button 
             onClick={() => onChangeView(AppView.AI_STYLIST)}
-            className="text-purple-600 text-sm font-medium hover:text-purple-700"
+            className="text-[#d6b980] text-xs uppercase tracking-widest hover:text-white transition-colors"
           >
             Запитати AI
           </button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {INITIAL_TRENDS.map((trend) => (
-            <div key={trend.id} className="group relative overflow-hidden rounded-2xl h-48 cursor-pointer">
-              <img src={trend.imageUrl} alt={trend.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-4">
-                <h4 className="text-white font-bold text-lg">{trend.title}</h4>
-                <p className="text-white/80 text-sm line-clamp-2">{trend.description}</p>
+            <div key={trend.id} className="group relative overflow-hidden rounded-lg h-64 cursor-pointer border border-[#2a3c52]">
+              <img src={trend.imageUrl} alt={trend.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#101b2a] via-[#101b2a]/40 to-transparent flex flex-col justify-end p-6">
+                <h4 className="text-[#d6b980] font-serif text-2xl mb-2">{trend.title}</h4>
+                <p className="text-slate-300 text-sm font-light leading-relaxed">{trend.description}</p>
               </div>
             </div>
           ))}

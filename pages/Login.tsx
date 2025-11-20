@@ -18,7 +18,6 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
     if (!isLogin && !name) return;
     
     setIsLoading(true);
-    // Simulate API call delay
     setTimeout(() => {
       setIsLoading(false);
       onLogin(email);
@@ -26,33 +25,33 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
-        <div className="bg-slate-900 p-8 text-center">
-          <div className="w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-900/50">
-            <Sparkles className="w-8 h-8 text-white" />
+    <div className="min-h-screen bg-[#101b2a] flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-[#1a2736] rounded-none shadow-2xl border border-[#d6b980]/20 overflow-hidden">
+        <div className="bg-[#0d1623] p-10 text-center border-b border-[#1e2d3d]">
+          <div className="w-12 h-12 border border-[#d6b980] flex items-center justify-center mx-auto mb-6 rotate-45">
+            <Sparkles className="w-6 h-6 text-[#d6b980] -rotate-45" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-1">BeautyFriendly AI</h1>
-          <p className="text-slate-400 text-sm">Ваш інтелектуальний асистент</p>
+          <h1 className="text-3xl font-serif text-[#d6b980] mb-2">BeautyFriendly</h1>
+          <p className="text-slate-500 text-xs uppercase tracking-widest">AI Assistant for Stylists</p>
         </div>
 
         <div className="p-8">
-          <h2 className="text-xl font-bold text-slate-900 mb-6 text-center">
-            {isLogin ? 'Вхід в систему' : 'Створення акаунту'}
+          <h2 className="text-xl font-serif text-white mb-8 text-center">
+            {isLogin ? 'Вхід' : 'Реєстрація'}
           </h2>
           
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {!isLogin && (
-              <div className="space-y-2 animate-in fade-in slide-in-from-top-4 duration-300">
-                <label className="text-sm font-medium text-slate-700">Ваше ім'я</label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-[#d6b980] uppercase tracking-wide">Ім'я</label>
+                <div className="relative group">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-[#d6b980] transition-colors pointer-events-none" />
                   <input 
                     type="text" 
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
-                    placeholder="Марія"
+                    className="w-full pl-10 pr-4 py-3 bg-[#101b2a] border border-[#2a3c52] text-white placeholder:text-slate-600 focus:outline-none focus:border-[#d6b980] transition-all rounded-none"
+                    placeholder="Ваше ім'я"
                     required={!isLogin}
                   />
                 </div>
@@ -60,73 +59,62 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
             )}
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Email</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
+              <label className="text-xs font-medium text-[#d6b980] uppercase tracking-wide">Email</label>
+              <div className="relative group">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-[#d6b980] transition-colors pointer-events-none" />
                 <input 
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
-                  placeholder="name@salon.com"
+                  className="w-full pl-10 pr-4 py-3 bg-[#101b2a] border border-[#2a3c52] text-white placeholder:text-slate-600 focus:outline-none focus:border-[#d6b980] transition-all rounded-none"
+                  placeholder="email@example.com"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Пароль</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
+              <label className="text-xs font-medium text-[#d6b980] uppercase tracking-wide">Пароль</label>
+              <div className="relative group">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-[#d6b980] transition-colors pointer-events-none" />
                 <input 
                   type="password" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                  className="w-full pl-10 pr-4 py-3 bg-[#101b2a] border border-[#2a3c52] text-white placeholder:text-slate-600 focus:outline-none focus:border-[#d6b980] transition-all rounded-none"
                   placeholder="••••••••"
                   required
                 />
               </div>
             </div>
 
-            {isLogin && (
-              <div className="flex justify-end">
-                <button type="button" className="text-sm text-purple-600 hover:text-purple-700 font-medium">
-                  Забули пароль?
-                </button>
-              </div>
-            )}
-
-            <div className="bg-blue-50 text-blue-700 p-3 rounded-lg text-xs text-center border border-blue-100">
-              💡 <strong>Demo Mode:</strong> Використовуйте будь-який email та пароль для входу.
+            <div className="bg-[#101b2a]/50 p-3 border border-[#2a3c52] text-slate-400 text-xs text-center">
+               <span className="text-[#d6b980]">Demo:</span> Введіть будь-які дані для входу.
             </div>
 
             <button 
               type="submit" 
               disabled={isLoading}
-              className="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-sm hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+              className="w-full bg-[#d6b980] text-[#101b2a] py-3.5 font-bold text-sm hover:bg-[#c2a56a] transition-all flex items-center justify-center gap-2 disabled:opacity-70 mt-4 rounded-sm"
             >
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
                 <>
-                  {isLogin ? 'Увійти' : 'Зареєструватися'} <ArrowRight className="w-4 h-4" />
+                  {isLogin ? 'Увійти' : 'Створити акаунт'} <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
 
           <div className="mt-8 text-center">
-            <p className="text-slate-500 text-sm">
-              {isLogin ? 'Немає акаунту?' : 'Вже є акаунт?'}{' '}
-              <button 
-                type="button"
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-purple-600 font-bold hover:underline focus:outline-none"
-              >
-                {isLogin ? 'Зареєструватися' : 'Увійти'}
-              </button>
-            </p>
+            <button 
+              type="button"
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-slate-400 text-sm hover:text-white transition-colors"
+            >
+              {isLogin ? 'Створити новий акаунт' : 'Вже маю акаунт'}
+            </button>
           </div>
         </div>
       </div>

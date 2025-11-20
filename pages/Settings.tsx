@@ -1,0 +1,149 @@
+import React, { useState } from 'react';
+import { User, Bell, Shield, CreditCard, ChevronRight, Moon, LogOut, Save, Check } from 'lucide-react';
+import { User as UserType } from '../types';
+
+interface SettingsProps {
+    user: UserType;
+    onUpdateUser: (updatedUser: Partial<UserType>) => void;
+    onLogout: () => void;
+}
+
+export const Settings: React.FC<SettingsProps> = ({ user, onUpdateUser, onLogout }) => {
+    const [name, setName] = useState(user.name);
+    const [isSaved, setIsSaved] = useState(false);
+
+    const handleSave = () => {
+        onUpdateUser({ name });
+        setIsSaved(true);
+        setTimeout(() => setIsSaved(false), 2000);
+    };
+
+    return (
+        <div className="space-y-8 pb-24 md:pb-8">
+            <header className="border-b border-[#1e2d3d] pb-6">
+                <h2 className="text-2xl font-serif text-white mb-2">Налаштування</h2>
+                <p className="text-slate-400 font-light">Керування профілем та додатком.</p>
+            </header>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Main Settings Column */}
+                <div className="lg:col-span-2 space-y-6">
+                    
+                    {/* Profile Section */}
+                    <section className="bg-[#1a2736] rounded border border-[#2a3c52] p-6">
+                        <div className="flex items-center gap-3 mb-6">
+                            <User className="w-5 h-5 text-[#d6b980]" />
+                            <h3 className="text-lg font-serif text-white">Профіль</h3>
+                        </div>
+                        
+                        <div className="space-y-4 max-w-md">
+                            <div>
+                                <label className="block text-xs uppercase tracking-widest text-slate-500 mb-2">Ім'я</label>
+                                <input 
+                                    type="text" 
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="w-full bg-[#101b2a] border border-[#2a3c52] rounded px-4 py-3 text-white focus:border-[#d6b980] focus:outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs uppercase tracking-widest text-slate-500 mb-2">Email</label>
+                                <input 
+                                    type="text" 
+                                    value={user.email}
+                                    disabled
+                                    className="w-full bg-[#101b2a]/50 border border-[#2a3c52] rounded px-4 py-3 text-slate-500 cursor-not-allowed"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs uppercase tracking-widest text-slate-500 mb-2">Роль</label>
+                                <input 
+                                    type="text" 
+                                    value={user.role}
+                                    disabled
+                                    className="w-full bg-[#101b2a]/50 border border-[#2a3c52] rounded px-4 py-3 text-slate-500 cursor-not-allowed"
+                                />
+                            </div>
+                            <button 
+                                onClick={handleSave}
+                                className="mt-2 bg-[#d6b980] text-[#101b2a] px-6 py-2 rounded text-xs font-bold uppercase tracking-widest hover:bg-[#c2a56a] transition-colors flex items-center gap-2"
+                            >
+                                {isSaved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
+                                {isSaved ? 'Збережено' : 'Зберегти зміни'}
+                            </button>
+                        </div>
+                    </section>
+
+                    {/* Interface Preferences */}
+                    <section className="bg-[#1a2736] rounded border border-[#2a3c52] p-6">
+                         <div className="flex items-center gap-3 mb-6">
+                            <Moon className="w-5 h-5 text-[#d6b980]" />
+                            <h3 className="text-lg font-serif text-white">Інтерфейс</h3>
+                        </div>
+                        <div className="flex items-center justify-between py-3 border-b border-[#2a3c52]">
+                            <div>
+                                <p className="text-white font-medium">Тема оформлення</p>
+                                <p className="text-xs text-slate-400">Поточна тема: Old Money (Dark)</p>
+                            </div>
+                            <span className="text-[#d6b980] text-xs border border-[#d6b980] px-2 py-1 rounded">Active</span>
+                        </div>
+                    </section>
+                </div>
+
+                {/* Sidebar / Status Column */}
+                <div className="space-y-6">
+                    <div className="bg-gradient-to-br from-[#d6b980] to-[#b09b6a] rounded p-6 text-[#101b2a]">
+                        <div className="flex items-center justify-between mb-4">
+                            <CrownIcon className="w-8 h-8" />
+                            <span className="text-xs font-bold uppercase bg-[#101b2a]/10 px-2 py-1 rounded">Active</span>
+                        </div>
+                        <h3 className="font-serif text-xl font-bold mb-1">{user.subscriptionPlan === 'pro' ? 'Gold Club' : user.subscriptionPlan === 'premium' ? 'Platinum' : 'Start'}</h3>
+                        <p className="text-sm opacity-80 mb-6">Ваш тарифний план активний.</p>
+                        <button className="w-full bg-[#101b2a] text-[#d6b980] py-3 rounded text-xs font-bold uppercase tracking-widest hover:bg-[#1a2736]">
+                            Керувати підпискою
+                        </button>
+                    </div>
+
+                    <div className="bg-[#1a2736] rounded border border-[#2a3c52] p-4 space-y-2">
+                         <button className="w-full flex items-center justify-between p-3 hover:bg-[#2a3c52] rounded group transition-colors">
+                            <div className="flex items-center gap-3">
+                                <Bell className="w-4 h-4 text-slate-400 group-hover:text-[#d6b980]" />
+                                <span className="text-slate-300 text-sm group-hover:text-white">Сповіщення</span>
+                            </div>
+                            <ChevronRight className="w-4 h-4 text-slate-500" />
+                        </button>
+                         <button className="w-full flex items-center justify-between p-3 hover:bg-[#2a3c52] rounded group transition-colors">
+                            <div className="flex items-center gap-3">
+                                <Shield className="w-4 h-4 text-slate-400 group-hover:text-[#d6b980]" />
+                                <span className="text-slate-300 text-sm group-hover:text-white">Безпека</span>
+                            </div>
+                            <ChevronRight className="w-4 h-4 text-slate-500" />
+                        </button>
+                         <button className="w-full flex items-center justify-between p-3 hover:bg-[#2a3c52] rounded group transition-colors">
+                            <div className="flex items-center gap-3">
+                                <CreditCard className="w-4 h-4 text-slate-400 group-hover:text-[#d6b980]" />
+                                <span className="text-slate-300 text-sm group-hover:text-white">Платежі</span>
+                            </div>
+                            <ChevronRight className="w-4 h-4 text-slate-500" />
+                        </button>
+                    </div>
+
+                     <button 
+                        onClick={onLogout}
+                        className="w-full flex items-center justify-center gap-2 p-4 text-red-400 hover:bg-red-400/10 rounded border border-red-400/20 transition-colors text-sm"
+                     >
+                        <LogOut className="w-4 h-4" />
+                        Вийти з акаунту
+                     </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Simple icon component for this file
+const CrownIcon = ({ className }: { className?: string }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
+    </svg>
+);
