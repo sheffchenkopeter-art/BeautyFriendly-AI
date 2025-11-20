@@ -1,12 +1,10 @@
 import { GoogleGenAI } from "@google/genai";
 import { ClientProfile } from "../types";
 
-// Helper to safely get API Key without crashing the browser
+// Helper to safely get API Key
+// Vite will replace 'process.env.API_KEY' with the actual string during build/serve
 const getApiKey = (): string | undefined => {
   try {
-    if (typeof process !== 'undefined' && process.env) {
-      return process.env.API_KEY;
-    }
     return process.env.API_KEY;
   } catch (e) {
     return undefined;
@@ -59,41 +57,50 @@ export const generateStylingAdvice = async (prompt: string): Promise<string> => 
 
 // --- Image Generation ---
 export const generateHairstyleImage = async (description: string): Promise<string> => {
+  const ai = getClient();
+  const promptText = `Professional hair photography, salon lighting, high resolution, 8k, realistic texture. Subject: ${description}. Style: Modern, aesthetic.`;
+
+  // 1. Try High-Quality Imagen 3 Model (Requires Subscription)
   try {
-    const ai = getClient();
-    
-    // Updated to use gemini-2.5-flash-image via generateContent
-    // This allows generation using the standard model which might be more accessible
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image',
-      contents: {
-        parts: [
-          {
-            text: `Generate a photorealistic, high-quality hair photography image. 8k resolution, salon lighting. Subject: ${description}. Style: Modern, aesthetic.`,
-          },
-        ],
-      },
+    const response = await ai.models.generateImages({
+      model: 'imagen-3.0-generate-001',
+      prompt: promptText,
       config: {
-        // Explicitly requesting image generation features if needed, 
-        // but for flash-image the model implies it.
+        numberOfImages: 1,
+        aspectRatio: '1:1',
+        outputMimeType: 'image/jpeg'
       }
     });
 
-    // Iterate through parts to find the image
+    const base64ImageBytes = response.generatedImages?.[0]?.image?.imageBytes;
+    if (base64ImageBytes) {
+      return `data:image/jpeg;base64,${base64ImageBytes}`;
+    }
+  } catch (error) {
+    console.warn("Imagen 3 generation failed, attempting fallback...", error);
+  }
+
+  // 2. Fallback to Gemini 2.5 Flash Image
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-image',
+      contents: {
+        parts: [{ text: `Generate photorealistic image: ${promptText}` }],
+      },
+    });
+
     if (response.candidates?.[0]?.content?.parts) {
       for (const part of response.candidates[0].content.parts) {
         if (part.inlineData) {
-          const base64EncodeString = part.inlineData.data;
-          return `data:image/png;base64,${base64EncodeString}`;
+          return `data:image/png;base64,${part.inlineData.data}`;
         }
       }
     }
-
-    throw new Error("No image generated in response");
   } catch (error) {
-    console.error("Gemini API Error (Image):", error);
-    throw new Error("Не вдалося створити зображення. Можливо, ваш API ключ не підтримує генерацію картинок (потрібен платний акаунт Google Cloud).");
+    console.error("Gemini Flash Image failed:", error);
   }
+
+  throw new Error("Не вдалося створити зображення. Перевірте баланс API або спробуйте пізніше.");
 };
 
 // --- Vision Analysis (Photo) ---
@@ -155,7 +162,7 @@ export const identifyClientProfile = async (description: string): Promise<Partia
     let jsonText = response.text;
     if (!jsonText) throw new Error("Empty response");
     
-    // FIX: Clean up any Markdown formatting (```json ... ```) that Gemini might include
+    // Clean up Markdown code blocks if present
     jsonText = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
 
     return JSON.parse(jsonText) as Partial<ClientProfile>;
