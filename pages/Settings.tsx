@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { User, Bell, Shield, CreditCard, ChevronRight, Moon, LogOut, Save, Check, Calendar, Clock, Scissors, Layout } from 'lucide-react';
+import { User, Bell, Shield, CreditCard, ChevronRight, Moon, LogOut, Save, Check, Calendar, Clock, Scissors, Layout, Sun } from 'lucide-react';
 import { User as UserType, WorkSchedule, CalendarDailyView, AppTheme } from '../types';
 
 interface SettingsProps {
@@ -65,135 +64,131 @@ export const Settings: React.FC<SettingsProps> = ({
     };
 
     return (
-        <div className="space-y-8 pb-24 md:pb-8">
+        <div className="space-y-8 pb-24 md:pb-8 animate-in fade-in duration-500">
             <header className="border-b border-border pb-6">
-                <h2 className="text-2xl font-serif text-main mb-2">Налаштування</h2>
-                <p className="text-muted font-light">Керування профілем та виглядом додатку.</p>
+                <h2 className="text-3xl font-serif text-main mb-2">Налаштування</h2>
+                <p className="text-muted font-light">Персоналізація та управління акаунтом.</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Settings Column */}
                 <div className="lg:col-span-2 space-y-6">
                     
-                     {/* Services Management Quick Link */}
-                     <section className="bg-surface rounded border border-border p-6 flex items-center justify-between group hover:border-accent transition-colors cursor-pointer" onClick={onNavigateToServices}>
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-primary border border-accent/30 flex items-center justify-center">
-                                <Scissors className="w-5 h-5 text-accent" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-serif text-main group-hover:text-accent transition-colors">Керування Послугами</h3>
-                                <p className="text-xs text-muted">Налаштування прайс-листа та категорій послуг</p>
-                            </div>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-muted group-hover:text-accent" />
-                    </section>
-
-                    {/* Appearance & Theme */}
-                    <section className="bg-surface rounded border border-border p-6">
+                    {/* Theme Selection - Visual Cards */}
+                    <section className="bg-surface rounded-xl border border-border p-6 shadow-sm">
                          <div className="flex items-center gap-3 mb-6">
-                            <Layout className="w-5 h-5 text-accent" />
-                            <h3 className="text-lg font-serif text-main">Оформлення</h3>
+                            <div className="p-2 bg-primary rounded-lg text-accent">
+                                <Layout className="w-5 h-5" />
+                            </div>
+                            <h3 className="text-lg font-serif text-main font-medium">Оформлення</h3>
                         </div>
 
                         <div className="grid grid-cols-3 gap-4 mb-6">
-                            <button onClick={() => onUpdateTheme('dark')} 
-                                className={`relative border rounded-lg p-3 flex flex-col items-center gap-2 transition-all overflow-hidden ${
-                                    theme === 'dark' 
-                                    ? 'border-accent bg-surface-soft ring-1 ring-accent shadow-lg' 
-                                    : 'border-border hover:bg-surface-soft hover:border-muted'
-                                }`}
-                            >
-                                {theme === 'dark' && <div className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full animate-pulse"></div>}
-                                <div className="w-full h-12 bg-[#101B2A] rounded border border-[#2a3c52] flex items-center justify-center relative overflow-hidden shadow-inner">
-                                     <div className="absolute top-0 right-0 w-4 h-4 bg-[#D6B980] rounded-bl"></div>
-                                    <span className="text-[#D6B980] font-serif text-xs">BF</span>
+                            {/* Dark Theme Card */}
+                            <button onClick={() => onUpdateTheme('dark')} className={`group relative flex flex-col gap-3 p-3 rounded-xl border-2 transition-all duration-300 ${theme === 'dark' ? 'border-accent bg-surface-soft shadow-lg scale-[1.02]' : 'border-transparent hover:bg-surface-soft hover:border-border'}`}>
+                                <div className="w-full aspect-video rounded-lg bg-[#101B2A] border border-[#2a3c52] relative overflow-hidden shadow-inner group-hover:shadow-md transition-shadow">
+                                     <div className="absolute top-3 left-3 w-8 h-2 bg-[#2a3c52] rounded-full"></div>
+                                     <div className="absolute top-8 left-3 right-3 h-12 bg-[#1a2736] rounded border border-[#2a3c52]"></div>
+                                     <div className="absolute bottom-0 right-0 w-8 h-8 bg-[#D6B980] rounded-tl-xl"></div>
                                 </div>
-                                <span className={`text-xs font-medium ${theme === 'dark' ? 'text-accent font-bold' : 'text-muted'}`}>Dark</span>
+                                <div className="text-center">
+                                    <span className={`text-sm font-medium block ${theme === 'dark' ? 'text-accent' : 'text-main'}`}>Old Money</span>
+                                    <span className="text-[10px] text-muted uppercase tracking-wider">Dark</span>
+                                </div>
                             </button>
 
-                            <button onClick={() => onUpdateTheme('light')} 
-                                className={`relative border rounded-lg p-3 flex flex-col items-center gap-2 transition-all overflow-hidden ${
-                                    theme === 'light' 
-                                    ? 'border-accent bg-surface-soft ring-1 ring-accent shadow-lg' 
-                                    : 'border-border hover:bg-surface-soft hover:border-muted'
-                                }`}
-                            >
-                                {theme === 'light' && <div className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full animate-pulse"></div>}
-                                <div className="w-full h-12 bg-[#F9F5EC] rounded border border-[#E5E7EB] flex items-center justify-center relative overflow-hidden shadow-inner">
-                                     <div className="absolute top-0 right-0 w-4 h-4 bg-[#D6B980] rounded-bl"></div>
-                                    <span className="text-[#D6B980] font-serif text-xs">BF</span>
+                            {/* Light Theme Card */}
+                            <button onClick={() => onUpdateTheme('light')} className={`group relative flex flex-col gap-3 p-3 rounded-xl border-2 transition-all duration-300 ${theme === 'light' ? 'border-accent bg-surface-soft shadow-lg scale-[1.02]' : 'border-transparent hover:bg-surface-soft hover:border-border'}`}>
+                                <div className="w-full aspect-video rounded-lg bg-[#F9F5EC] border border-[#E5E7EB] relative overflow-hidden shadow-inner group-hover:shadow-md transition-shadow">
+                                     <div className="absolute top-3 left-3 w-8 h-2 bg-[#E5E7EB] rounded-full"></div>
+                                     <div className="absolute top-8 left-3 right-3 h-12 bg-[#FFFFFF] rounded border border-[#E5E7EB]"></div>
+                                     <div className="absolute bottom-0 right-0 w-8 h-8 bg-[#B59A60] rounded-tl-xl"></div>
                                 </div>
-                                <span className={`text-xs font-medium ${theme === 'light' ? 'text-accent font-bold' : 'text-muted'}`}>Light</span>
+                                <div className="text-center">
+                                    <span className={`text-sm font-medium block ${theme === 'light' ? 'text-accent' : 'text-main'}`}>Gallery</span>
+                                    <span className="text-[10px] text-muted uppercase tracking-wider">Light</span>
+                                </div>
                             </button>
 
-                            <button onClick={() => onUpdateTheme('neutral')} 
-                                className={`relative border rounded-lg p-3 flex flex-col items-center gap-2 transition-all overflow-hidden ${
-                                    theme === 'neutral' 
-                                    ? 'border-accent bg-surface-soft ring-1 ring-accent shadow-lg' 
-                                    : 'border-border hover:bg-surface-soft hover:border-muted'
-                                }`}
-                            >
-                                {theme === 'neutral' && <div className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full animate-pulse"></div>}
-                                <div className="w-full h-12 bg-[#0F172A] rounded border border-[#334155] flex items-center justify-center relative overflow-hidden shadow-inner">
-                                     <div className="absolute top-0 right-0 w-4 h-4 bg-[#94A3B8] rounded-bl"></div>
-                                    <span className="text-[#94A3B8] font-serif text-xs">BF</span>
+                             {/* Neutral Theme Card */}
+                             <button onClick={() => onUpdateTheme('neutral')} className={`group relative flex flex-col gap-3 p-3 rounded-xl border-2 transition-all duration-300 ${theme === 'neutral' ? 'border-accent bg-surface-soft shadow-lg scale-[1.02]' : 'border-transparent hover:bg-surface-soft hover:border-border'}`}>
+                                <div className="w-full aspect-video rounded-lg bg-[#0F172A] border border-[#334155] relative overflow-hidden shadow-inner group-hover:shadow-md transition-shadow">
+                                     <div className="absolute top-3 left-3 w-8 h-2 bg-[#334155] rounded-full"></div>
+                                     <div className="absolute top-8 left-3 right-3 h-12 bg-[#1E293B] rounded border border-[#334155]"></div>
+                                     <div className="absolute bottom-0 right-0 w-8 h-8 bg-[#94A3B8] rounded-tl-xl"></div>
                                 </div>
-                                <span className={`text-xs font-medium ${theme === 'neutral' ? 'text-accent font-bold' : 'text-muted'}`}>Neutral</span>
+                                <div className="text-center">
+                                    <span className={`text-sm font-medium block ${theme === 'neutral' ? 'text-accent' : 'text-main'}`}>Studio</span>
+                                    <span className="text-[10px] text-muted uppercase tracking-wider">Neutral</span>
+                                </div>
                             </button>
                         </div>
                         
-                        <div className="flex items-center justify-between py-3 border-t border-border">
+                        <div className="flex items-center justify-between pt-4 border-t border-border">
                             <div>
-                                <p className="text-main font-medium">Вигляд Календаря (День)</p>
-                                <p className="text-xs text-muted">Відображення записів на день</p>
+                                <p className="text-main font-medium text-sm">Вигляд Календаря</p>
+                                <p className="text-xs text-muted">Стиль відображення дня</p>
                             </div>
-                            <div className="flex bg-primary rounded p-1 border border-border">
+                            <div className="flex bg-primary rounded-lg p-1 border border-border">
                                 <button 
                                     onClick={() => onUpdateCalendarView('cards')}
-                                    className={`px-3 py-1 text-xs rounded transition-colors ${calendarDailyView === 'cards' ? 'bg-accent text-primary font-bold' : 'text-muted hover:text-main'}`}
+                                    className={`px-4 py-1.5 text-xs font-medium rounded-md transition-all ${calendarDailyView === 'cards' ? 'bg-accent text-primary shadow-sm' : 'text-muted hover:text-main'}`}
                                 >
                                     Cards
                                 </button>
                                 <button 
                                     onClick={() => onUpdateCalendarView('timeline')}
-                                    className={`px-3 py-1 text-xs rounded transition-colors ${calendarDailyView === 'timeline' ? 'bg-accent text-primary font-bold' : 'text-muted hover:text-main'}`}
+                                    className={`px-4 py-1.5 text-xs font-medium rounded-md transition-all ${calendarDailyView === 'timeline' ? 'bg-accent text-primary shadow-sm' : 'text-muted hover:text-main'}`}
                                 >
                                     Timeline
                                 </button>
                             </div>
                         </div>
                     </section>
+                    
+                     {/* Services Management Quick Link */}
+                     <section className="bg-surface rounded-xl border border-border p-6 flex items-center justify-between group hover:border-accent transition-all cursor-pointer shadow-sm hover:shadow-md btn-premium" onClick={onNavigateToServices}>
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-full bg-primary border border-accent/30 flex items-center justify-center group-hover:bg-accent group-hover:text-primary transition-colors">
+                                <Scissors className="w-6 h-6 text-accent group-hover:text-primary transition-colors" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-serif text-main group-hover:text-accent transition-colors font-medium">Керування Послугами</h3>
+                                <p className="text-sm text-muted">Налаштування прайс-листа та категорій</p>
+                            </div>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-muted group-hover:text-accent transition-transform group-hover:translate-x-1" />
+                    </section>
 
                     {/* Profile Section */}
-                    <section className="bg-surface rounded border border-border p-6">
+                    <section className="bg-surface rounded-xl border border-border p-6 shadow-sm">
                         <div className="flex items-center gap-3 mb-6">
-                            <User className="w-5 h-5 text-accent" />
-                            <h3 className="text-lg font-serif text-main">Профіль</h3>
+                            <div className="p-2 bg-primary rounded-lg text-accent"><User className="w-5 h-5" /></div>
+                            <h3 className="text-lg font-serif text-main font-medium">Профіль Майстра</h3>
                         </div>
                         
                         <div className="space-y-4 max-w-md">
                             <div>
-                                <label className="block text-xs uppercase tracking-widest text-muted mb-2">Ім'я</label>
+                                <label className="block text-xs uppercase tracking-widest text-muted mb-2 font-semibold">Ім'я</label>
                                 <input 
                                     type="text" 
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none"
+                                    className="input-premium"
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs uppercase tracking-widest text-muted mb-2">Email</label>
+                                <label className="block text-xs uppercase tracking-widest text-muted mb-2 font-semibold">Email</label>
                                 <input 
                                     type="text" 
                                     value={user.email}
                                     disabled
-                                    className="w-full bg-primary/50 border border-border rounded px-4 py-3 text-muted cursor-not-allowed"
+                                    className="input-premium opacity-60 cursor-not-allowed"
                                 />
                             </div>
                             <button 
                                 onClick={handleSaveProfile}
-                                className="mt-2 bg-accent text-primary px-6 py-2 rounded text-xs font-bold uppercase tracking-widest hover:bg-accent-hover transition-colors flex items-center gap-2"
+                                className="mt-4 bg-accent text-primary px-8 py-3 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-accent-hover transition-colors flex items-center gap-2 shadow-lg shadow-accent/20 btn-premium"
                             >
                                 {isSaved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
                                 {isSaved ? 'Збережено' : 'Зберегти зміни'}
@@ -202,18 +197,18 @@ export const Settings: React.FC<SettingsProps> = ({
                     </section>
 
                      {/* Work Schedule Section */}
-                     <section className="bg-surface rounded border border-border p-6">
+                     <section className="bg-surface rounded-xl border border-border p-6 shadow-sm">
                         <div className="flex items-center gap-3 mb-6">
-                            <Clock className="w-5 h-5 text-accent" />
-                            <h3 className="text-lg font-serif text-main">Графік роботи</h3>
+                            <div className="p-2 bg-primary rounded-lg text-accent"><Clock className="w-5 h-5" /></div>
+                            <h3 className="text-lg font-serif text-main font-medium">Графік роботи</h3>
                         </div>
 
-                        <div className="space-y-4">
-                            <div className="grid grid-cols-1 gap-3">
+                        <div className="space-y-3">
+                            <div className="grid grid-cols-1 gap-2">
                                 {[1, 2, 3, 4, 5, 6, 0].map((dayIdx) => {
                                     const dayConfig = localSchedule[dayIdx];
                                     return (
-                                        <div key={dayIdx} className={`flex items-center gap-4 p-3 rounded border transition-colors ${dayConfig.isWorking ? 'bg-primary border-border' : 'bg-primary/30 border-border opacity-60'}`}>
+                                        <div key={dayIdx} className={`flex items-center gap-4 p-3 rounded-lg border transition-all ${dayConfig.isWorking ? 'bg-primary border-border' : 'bg-surface-soft border-transparent opacity-50'}`}>
                                             <div className="flex items-center gap-3 w-32">
                                                 <input 
                                                     type="checkbox"
@@ -232,20 +227,20 @@ export const Settings: React.FC<SettingsProps> = ({
                                                     value={dayConfig.start}
                                                     onChange={(e) => updateTime(dayIdx, 'start', e.target.value)}
                                                     disabled={!dayConfig.isWorking}
-                                                    className="bg-surface border border-border rounded px-2 py-1 text-xs text-main focus:border-accent disabled:opacity-30 [color-scheme:dark]"
+                                                    className="bg-surface border border-border rounded px-2 py-1 text-xs text-main focus:border-accent disabled:opacity-30 focus:outline-none [color-scheme:dark]"
                                                 />
-                                                <span className="text-muted">-</span>
+                                                <span className="text-muted text-xs">-</span>
                                                 <input 
                                                     type="time" 
                                                     value={dayConfig.end}
                                                     onChange={(e) => updateTime(dayIdx, 'end', e.target.value)}
                                                     disabled={!dayConfig.isWorking}
-                                                    className="bg-surface border border-border rounded px-2 py-1 text-xs text-main focus:border-accent disabled:opacity-30 [color-scheme:dark]"
+                                                    className="bg-surface border border-border rounded px-2 py-1 text-xs text-main focus:border-accent disabled:opacity-30 focus:outline-none [color-scheme:dark]"
                                                 />
                                             </div>
                                             
                                             {!dayConfig.isWorking && (
-                                                <span className="text-xs text-muted uppercase tracking-wider font-bold">Вихідний</span>
+                                                <span className="text-[10px] text-muted uppercase tracking-wider font-bold">Вихідний</span>
                                             )}
                                         </div>
                                     );
@@ -253,7 +248,7 @@ export const Settings: React.FC<SettingsProps> = ({
                             </div>
                             <button 
                                 onClick={handleSaveSchedule}
-                                className="mt-4 bg-primary border border-accent text-accent px-6 py-2 rounded text-xs font-bold uppercase tracking-widest hover:bg-accent hover:text-primary transition-colors flex items-center gap-2"
+                                className="mt-4 w-full bg-primary border border-accent text-accent px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-accent hover:text-primary transition-colors flex items-center justify-center gap-2 btn-premium"
                             >
                                 {isScheduleSaved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
                                 {isScheduleSaved ? 'Графік оновлено' : 'Оновити графік'}
@@ -264,45 +259,36 @@ export const Settings: React.FC<SettingsProps> = ({
 
                 {/* Sidebar / Status Column */}
                 <div className="space-y-6">
-                    <div className="bg-gradient-to-br from-accent to-accent-hover rounded p-6 text-primary">
-                        <div className="flex items-center justify-between mb-4">
-                            <CrownIcon className="w-8 h-8" />
-                            <span className="text-xs font-bold uppercase bg-primary/20 px-2 py-1 rounded">Active</span>
+                    <div className="bg-gradient-to-br from-accent to-accent-hover rounded-xl p-8 text-primary shadow-xl shadow-accent/10 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-8 opacity-10"><CrownIcon className="w-32 h-32" /></div>
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-6">
+                                <CrownIcon className="w-8 h-8" />
+                                <span className="text-[10px] font-bold uppercase bg-primary/20 px-3 py-1 rounded-full backdrop-blur-sm">Active</span>
+                            </div>
+                            <h3 className="font-serif text-2xl font-bold mb-1">{user.subscriptionPlan === 'pro' ? 'Gold Club' : user.subscriptionPlan === 'premium' ? 'Platinum' : 'Start'}</h3>
+                            <p className="text-sm opacity-80 mb-8">Ваш тарифний план активний.</p>
+                            <button className="w-full bg-primary text-accent py-3 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-surface shadow-lg btn-premium">
+                                Керувати підпискою
+                            </button>
                         </div>
-                        <h3 className="font-serif text-xl font-bold mb-1">{user.subscriptionPlan === 'pro' ? 'Gold Club' : user.subscriptionPlan === 'premium' ? 'Platinum' : 'Start'}</h3>
-                        <p className="text-sm opacity-80 mb-6">Ваш тарифний план активний.</p>
-                        <button className="w-full bg-primary text-accent py-3 rounded text-xs font-bold uppercase tracking-widest hover:bg-surface">
-                            Керувати підпискою
-                        </button>
                     </div>
 
-                    <div className="bg-surface rounded border border-border p-4 space-y-2">
-                         <button className="w-full flex items-center justify-between p-3 hover:bg-surface-soft rounded group transition-colors">
-                            <div className="flex items-center gap-3">
-                                <Bell className="w-4 h-4 text-muted group-hover:text-accent" />
-                                <span className="text-main text-sm">Сповіщення</span>
-                            </div>
-                            <ChevronRight className="w-4 h-4 text-muted" />
-                        </button>
-                         <button className="w-full flex items-center justify-between p-3 hover:bg-surface-soft rounded group transition-colors">
-                            <div className="flex items-center gap-3">
-                                <Shield className="w-4 h-4 text-muted group-hover:text-accent" />
-                                <span className="text-main text-sm">Безпека</span>
-                            </div>
-                            <ChevronRight className="w-4 h-4 text-muted" />
-                        </button>
-                         <button className="w-full flex items-center justify-between p-3 hover:bg-surface-soft rounded group transition-colors">
-                            <div className="flex items-center gap-3">
-                                <CreditCard className="w-4 h-4 text-muted group-hover:text-accent" />
-                                <span className="text-main text-sm">Платежі</span>
-                            </div>
-                            <ChevronRight className="w-4 h-4 text-muted" />
-                        </button>
+                    <div className="bg-surface rounded-xl border border-border p-4 space-y-2 shadow-sm">
+                         {['Сповіщення', 'Безпека', 'Платежі'].map((item) => (
+                             <button key={item} className="w-full flex items-center justify-between p-4 hover:bg-surface-soft rounded-lg group transition-colors">
+                                <div className="flex items-center gap-3">
+                                    <Shield className="w-4 h-4 text-muted group-hover:text-accent transition-colors" />
+                                    <span className="text-main text-sm font-medium">{item}</span>
+                                </div>
+                                <ChevronRight className="w-4 h-4 text-muted group-hover:text-accent transition-colors" />
+                            </button>
+                         ))}
                     </div>
 
                      <button 
                         onClick={onLogout}
-                        className="w-full flex items-center justify-center gap-2 p-4 text-red-400 hover:bg-red-400/10 rounded border border-red-400/20 transition-colors text-sm"
+                        className="w-full flex items-center justify-center gap-2 p-4 text-danger hover:bg-danger/5 rounded-xl border border-danger/20 transition-colors text-sm font-medium btn-premium"
                      >
                         <LogOut className="w-4 h-4" />
                         Вийти з акаунту
@@ -313,7 +299,6 @@ export const Settings: React.FC<SettingsProps> = ({
     );
 };
 
-// Simple icon component for this file
 const CrownIcon = ({ className }: { className?: string }) => (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />

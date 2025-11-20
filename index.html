@@ -2,137 +2,29 @@
 <html lang="uk">
   <head>
     <meta charset="UTF-8" />
-    <!-- Added maximum-scale=1.0 to prevent iOS input zooming -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>BeautyFriendly AI - Асистент Перукаря</title>
+    <meta name="description" content="Персональний AI асистент для перукарів та колористів. Управління клієнтами, генерація формул та візуалізація стилю.">
     
-    <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#101b2a" />
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="BeautyFriendly">
     
-    <!-- Updated Icons to use local SVG -->
     <link rel="icon" type="image/svg+xml" href="/icon.svg">
     <link rel="apple-touch-icon" href="/icon.svg">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: 'var(--bg-primary)',
-              surface: 'var(--bg-surface)',
-              'surface-soft': 'var(--bg-surface-soft)',
-              main: 'var(--text-main)',
-              muted: 'var(--text-muted)',
-              accent: 'var(--color-accent)',
-              'accent-hover': 'var(--color-accent-hover)',
-              border: 'var(--border-color)',
-              danger: '#F87171',
-              success: '#4ADE80',
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              serif: ['Playfair Display', 'serif'],
-            }
-          }
-        }
-      }
-    </script>
-
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-      /* 1. BeautyFriendly Dark (Old Money) - Default */
-      :root, .theme-dark {
-        --bg-primary: #101B2A;
-        --bg-surface: #1a2736;
-        --bg-surface-soft: #0d1623;
-        --text-main: #F9FAFB;
-        --text-muted: #9CA3AF;
-        --color-accent: #D6B980;
-        --color-accent-hover: #C2A56A;
-        --border-color: #2a3c52;
-      }
-
-      /* 2. GalleryHairColor Light */
-      .theme-light {
-        --bg-primary: #F9F5EC;
-        --bg-surface: #FFFFFF;
-        --bg-surface-soft: #F3F4F6;
-        --text-main: #111827;
-        --text-muted: #6B7280;
-        --color-accent: #D6B980;
-        --color-accent-hover: #B59A60;
-        --border-color: #E5E7EB;
-      }
-
-      /* 3. Studio Neutral */
-      .theme-neutral {
-        --bg-primary: #0F172A;
-        --bg-surface: #1E293B;
-        --bg-surface-soft: #020617;
-        --text-main: #E2E8F0;
-        --text-muted: #94A3B8; /* Steel Blue Accent */
-        --color-accent: #94A3B8;
-        --color-accent-hover: #64748B;
-        --border-color: #334155;
-      }
-
-      body {
-        font-family: 'Inter', sans-serif;
-        background-color: var(--bg-primary);
-        color: var(--text-main);
-        transition: background-color 0.3s ease, color 0.3s ease;
-        overscroll-behavior-y: none; /* Prevents pull-to-refresh on mobile */
-      }
-      
-      h1, h2, h3, h4, h5, h6 {
-        font-family: 'Playfair Display', serif;
-      }
-      
-      /* Custom scrollbar */
-      ::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: var(--bg-primary); 
-      }
-      ::-webkit-scrollbar-thumb {
-        background: var(--border-color); 
-        border-radius: 3px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: var(--color-accent); 
-      }
-      
-      .safe-area-pb {
-        padding-bottom: env(safe-area-inset-bottom);
-      }
-
-      /* Input autofill fix for dark themes */
-      input:-webkit-autofill,
-      input:-webkit-autofill:hover, 
-      input:-webkit-autofill:focus, 
-      input:-webkit-autofill:active{
-          -webkit-box-shadow: 0 0 0 30px var(--bg-surface) inset !important;
-          -webkit-text-fill-color: var(--text-main) !important;
-      }
-    </style>
   <script type="importmap">
 {
   "imports": {
     "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
     "date-fns": "https://aistudiocdn.com/date-fns@^4.1.0",
     "date-fns/": "https://aistudiocdn.com/date-fns@^4.1.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "vite": "https://aistudiocdn.com/vite@^7.2.4",
     "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
   }
@@ -141,6 +33,6 @@
 </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="index.tsx"></script>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>

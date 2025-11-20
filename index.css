@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 1. BeautyFriendly Dark (Old Money) - Default */
+:root {
+  --bg-primary: #0B1120; /* Глибокий, дорогий темний */
+  --bg-surface: #151e32;
+  --bg-surface-soft: #1e293b;
+  --text-main: #FDFBF7;
+  --text-muted: #94A3B8;
+  --color-accent: #D4AF37; /* Metallic Gold */
+  --color-accent-hover: #F3E5AB; /* Champagne */
+  --border-color: #2D3748;
+  --glass-bg: rgba(21, 30, 50, 0.7);
+  --glass-border: rgba(212, 175, 55, 0.15);
+}
+
+/* 2. GalleryHairColor Light */
+.theme-light {
+  --bg-primary: #F8F5F2; /* Warm alabaster */
+  --bg-surface: #FFFFFF;
+  --bg-surface-soft: #F2EFE9;
+  --text-main: #1A202C;
+  --text-muted: #718096;
+  --color-accent: #C5A059;
+  --color-accent-hover: #2D3748;
+  --border-color: #E2E8F0;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(197, 160, 89, 0.2);
+}
+
+/* 3. Studio Neutral */
+.theme-neutral {
+  --bg-primary: #0F172A;
+  --bg-surface: #1E293B;
+  --bg-surface-soft: #334155;
+  --text-main: #F1F5F9;
+  --text-muted: #94A3B8;
+  --color-accent: #38BDF8; /* Electric Blue */
+  --color-accent-hover: #7DD3FC;
+  --border-color: #334155;
+  --glass-bg: rgba(30, 41, 59, 0.7);
+  --glass-border: rgba(56, 189, 248, 0.2);
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: 'Inter', sans-serif;
+  overscroll-behavior-y: none;
+  -webkit-font-smoothing: antialiased;
+  /* Subtle texture/gradient to avoid flat look */
+  background-image: radial-gradient(circle at 50% 0%, var(--bg-surface) 0%, var(--bg-primary) 70%);
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+  letter-spacing: -0.01em;
+}
+
+/* UTILITIES */
+@layer components {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+  }
+
+  .input-premium {
+    @apply w-full bg-surface-soft/50 border border-border rounded-lg px-4 py-3 text-main focus:border-accent focus:bg-surface-soft focus:outline-none transition-all placeholder:text-muted/50 font-light shadow-sm;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-accent to-accent-hover text-[#0B1120] font-bold uppercase tracking-widest shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:scale-[1.01] active:scale-95 transition-all duration-300 rounded-lg;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-accent/30;
+  }
+}
+
+/* GLOBAL SMOOTH TRANSITIONS (The "Soft" Feel) */
+*, *::before, *::after {
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom);
+}
