@@ -20,7 +20,8 @@ export enum ServiceType {
 export type PaymentMethod = 'cash' | 'card';
 export type TransactionType = 'income' | 'expense';
 export type CalendarDailyView = 'cards' | 'timeline';
-export type Gender = 'male' | 'female'; // New Type
+export type Gender = 'male' | 'female';
+export type AppTheme = 'dark' | 'light' | 'neutral'; // New Theme Type
 
 export enum ExpenseCategory {
   RENT = 'Оренда',

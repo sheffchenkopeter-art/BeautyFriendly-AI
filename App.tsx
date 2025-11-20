@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Navigation } from './components/Navigation';
 import { Dashboard } from './pages/Dashboard';
@@ -10,7 +9,7 @@ import { Login } from './pages/Login';
 import { Subscription } from './pages/Subscription';
 import { Settings } from './pages/Settings';
 import { Analytics } from './pages/Analytics';
-import { AppView, User, Client, Appointment, WorkSchedule, WalletState, Transaction, PaymentMethod, ExpenseCategory, CalendarDailyView, ServiceItem, ServiceCategory } from './types';
+import { AppView, User, Client, Appointment, WorkSchedule, WalletState, Transaction, PaymentMethod, ExpenseCategory, CalendarDailyView, ServiceItem, ServiceCategory, AppTheme } from './types';
 import { MOCK_CLIENTS, MOCK_APPOINTMENTS, DEFAULT_SCHEDULE, INITIAL_WALLET_STATE, DEFAULT_SERVICES, DEFAULT_CATEGORIES } from './constants';
 
 function App() {
@@ -19,6 +18,7 @@ function App() {
   
   // Preferences
   const [calendarDailyView, setCalendarDailyView] = useState<CalendarDailyView>('cards');
+  const [theme, setTheme] = useState<AppTheme>('dark'); // Theme State
 
   // Data State
   const [clients, setClients] = useState<Client[]>(MOCK_CLIENTS);
@@ -235,7 +235,9 @@ function App() {
                   onUpdateSchedule={setWorkSchedule}
                   calendarDailyView={calendarDailyView}
                   onUpdateCalendarView={setCalendarDailyView}
-                  onNavigateToServices={() => setCurrentView(AppView.SERVICES)} // Handler for Settings nav
+                  onNavigateToServices={() => setCurrentView(AppView.SERVICES)} 
+                  theme={theme}
+                  onUpdateTheme={setTheme}
                />;
       default:
         return <Dashboard 
@@ -251,14 +253,14 @@ function App() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#101b2a] text-slate-200 font-sans selection:bg-[#d6b980] selection:text-[#101b2a]">
+    <div className={`flex min-h-screen bg-primary text-main font-sans selection:bg-accent selection:text-primary theme-${theme} transition-colors duration-300`}>
       <Navigation 
         currentView={currentView} 
         onViewChange={setCurrentView} 
         user={user}
         onLogout={handleLogout}
       />
-      <main className="flex-1 md:ml-64 h-screen overflow-y-auto bg-[#101b2a] scroll-smooth">
+      <main className="flex-1 md:ml-64 h-screen overflow-y-auto bg-primary scroll-smooth transition-colors duration-300">
         <div className="max-w-7xl mx-auto p-4 md:p-8">
             {renderContent()}
         </div>

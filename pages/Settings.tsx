@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
-import { User, Bell, Shield, CreditCard, ChevronRight, Moon, LogOut, Save, Check, Calendar, Clock, Scissors } from 'lucide-react';
-import { User as UserType, WorkSchedule, CalendarDailyView } from '../types';
+import { User, Bell, Shield, CreditCard, ChevronRight, Moon, LogOut, Save, Check, Calendar, Clock, Scissors, Layout } from 'lucide-react';
+import { User as UserType, WorkSchedule, CalendarDailyView, AppTheme } from '../types';
 
 interface SettingsProps {
     user: UserType;
@@ -11,7 +10,9 @@ interface SettingsProps {
     onUpdateSchedule: (schedule: WorkSchedule) => void;
     calendarDailyView: CalendarDailyView;
     onUpdateCalendarView: (view: CalendarDailyView) => void;
-    onNavigateToServices: () => void; // New prop
+    onNavigateToServices: () => void;
+    theme: AppTheme;
+    onUpdateTheme: (theme: AppTheme) => void;
 }
 
 const DAYS_OF_WEEK = [
@@ -22,7 +23,8 @@ export const Settings: React.FC<SettingsProps> = ({
     user, onUpdateUser, onLogout, 
     workSchedule, onUpdateSchedule,
     calendarDailyView, onUpdateCalendarView,
-    onNavigateToServices
+    onNavigateToServices,
+    theme, onUpdateTheme
 }) => {
     const [name, setName] = useState(user.name);
     const [isSaved, setIsSaved] = useState(false);
@@ -63,58 +65,111 @@ export const Settings: React.FC<SettingsProps> = ({
 
     return (
         <div className="space-y-8 pb-24 md:pb-8">
-            <header className="border-b border-[#1e2d3d] pb-6">
-                <h2 className="text-2xl font-serif text-white mb-2">Налаштування</h2>
-                <p className="text-slate-400 font-light">Керування профілем та додатком.</p>
+            <header className="border-b border-border pb-6">
+                <h2 className="text-2xl font-serif text-main mb-2">Налаштування</h2>
+                <p className="text-muted font-light">Керування профілем та виглядом додатку.</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Settings Column */}
                 <div className="lg:col-span-2 space-y-6">
                     
-                     {/* Services Management Quick Link (Requested feature) */}
-                     <section className="bg-[#1a2736] rounded border border-[#2a3c52] p-6 flex items-center justify-between group hover:border-[#d6b980] transition-colors cursor-pointer" onClick={onNavigateToServices}>
+                     {/* Services Management Quick Link */}
+                     <section className="bg-surface rounded border border-border p-6 flex items-center justify-between group hover:border-accent transition-colors cursor-pointer" onClick={onNavigateToServices}>
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-[#101b2a] border border-[#d6b980]/30 flex items-center justify-center">
-                                <Scissors className="w-5 h-5 text-[#d6b980]" />
+                            <div className="w-10 h-10 rounded-full bg-primary border border-accent/30 flex items-center justify-center">
+                                <Scissors className="w-5 h-5 text-accent" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-serif text-white group-hover:text-[#d6b980] transition-colors">Керування Послугами</h3>
-                                <p className="text-xs text-slate-500">Налаштування прайс-листа та категорій послуг</p>
+                                <h3 className="text-lg font-serif text-main group-hover:text-accent transition-colors">Керування Послугами</h3>
+                                <p className="text-xs text-muted">Налаштування прайс-листа та категорій послуг</p>
                             </div>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-[#d6b980]" />
+                        <ChevronRight className="w-5 h-5 text-muted group-hover:text-accent" />
+                    </section>
+
+                    {/* Appearance & Theme */}
+                    <section className="bg-surface rounded border border-border p-6">
+                         <div className="flex items-center gap-3 mb-6">
+                            <Layout className="w-5 h-5 text-accent" />
+                            <h3 className="text-lg font-serif text-main">Оформлення</h3>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4 mb-6">
+                            <button onClick={() => onUpdateTheme('dark')} className={`border rounded p-3 flex flex-col items-center gap-2 transition-all ${theme === 'dark' ? 'border-accent bg-surface-soft' : 'border-border hover:bg-surface-soft'}`}>
+                                <div className="w-full h-12 bg-[#101B2A] rounded border border-[#2a3c52] flex items-center justify-center relative overflow-hidden">
+                                     <div className="absolute top-0 right-0 w-4 h-4 bg-[#D6B980] rounded-bl"></div>
+                                    <span className="text-[#D6B980] font-serif text-xs">BF</span>
+                                </div>
+                                <span className={`text-xs font-medium ${theme === 'dark' ? 'text-accent' : 'text-muted'}`}>Dark (Luxury)</span>
+                            </button>
+                            <button onClick={() => onUpdateTheme('light')} className={`border rounded p-3 flex flex-col items-center gap-2 transition-all ${theme === 'light' ? 'border-accent bg-surface-soft' : 'border-border hover:bg-surface-soft'}`}>
+                                <div className="w-full h-12 bg-[#F9F5EC] rounded border border-[#E5E7EB] flex items-center justify-center relative overflow-hidden">
+                                     <div className="absolute top-0 right-0 w-4 h-4 bg-[#D6B980] rounded-bl"></div>
+                                    <span className="text-[#D6B980] font-serif text-xs">BF</span>
+                                </div>
+                                <span className={`text-xs font-medium ${theme === 'light' ? 'text-accent' : 'text-muted'}`}>Light (Gallery)</span>
+                            </button>
+                            <button onClick={() => onUpdateTheme('neutral')} className={`border rounded p-3 flex flex-col items-center gap-2 transition-all ${theme === 'neutral' ? 'border-accent bg-surface-soft' : 'border-border hover:bg-surface-soft'}`}>
+                                <div className="w-full h-12 bg-[#0F172A] rounded border border-[#334155] flex items-center justify-center relative overflow-hidden">
+                                     <div className="absolute top-0 right-0 w-4 h-4 bg-[#94A3B8] rounded-bl"></div>
+                                    <span className="text-[#94A3B8] font-serif text-xs">BF</span>
+                                </div>
+                                <span className={`text-xs font-medium ${theme === 'neutral' ? 'text-accent' : 'text-muted'}`}>Neutral (Studio)</span>
+                            </button>
+                        </div>
+                        
+                        <div className="flex items-center justify-between py-3 border-t border-border">
+                            <div>
+                                <p className="text-main font-medium">Вигляд Календаря (День)</p>
+                                <p className="text-xs text-muted">Відображення записів на день</p>
+                            </div>
+                            <div className="flex bg-primary rounded p-1 border border-border">
+                                <button 
+                                    onClick={() => onUpdateCalendarView('cards')}
+                                    className={`px-3 py-1 text-xs rounded transition-colors ${calendarDailyView === 'cards' ? 'bg-accent text-primary font-bold' : 'text-muted hover:text-main'}`}
+                                >
+                                    Cards
+                                </button>
+                                <button 
+                                    onClick={() => onUpdateCalendarView('timeline')}
+                                    className={`px-3 py-1 text-xs rounded transition-colors ${calendarDailyView === 'timeline' ? 'bg-accent text-primary font-bold' : 'text-muted hover:text-main'}`}
+                                >
+                                    Timeline
+                                </button>
+                            </div>
+                        </div>
                     </section>
 
                     {/* Profile Section */}
-                    <section className="bg-[#1a2736] rounded border border-[#2a3c52] p-6">
+                    <section className="bg-surface rounded border border-border p-6">
                         <div className="flex items-center gap-3 mb-6">
-                            <User className="w-5 h-5 text-[#d6b980]" />
-                            <h3 className="text-lg font-serif text-white">Профіль</h3>
+                            <User className="w-5 h-5 text-accent" />
+                            <h3 className="text-lg font-serif text-main">Профіль</h3>
                         </div>
                         
                         <div className="space-y-4 max-w-md">
                             <div>
-                                <label className="block text-xs uppercase tracking-widest text-slate-500 mb-2">Ім'я</label>
+                                <label className="block text-xs uppercase tracking-widest text-muted mb-2">Ім'я</label>
                                 <input 
                                     type="text" 
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full bg-[#101b2a] border border-[#2a3c52] rounded px-4 py-3 text-white focus:border-[#d6b980] focus:outline-none"
+                                    className="w-full bg-primary border border-border rounded px-4 py-3 text-main focus:border-accent focus:outline-none"
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs uppercase tracking-widest text-slate-500 mb-2">Email</label>
+                                <label className="block text-xs uppercase tracking-widest text-muted mb-2">Email</label>
                                 <input 
                                     type="text" 
                                     value={user.email}
                                     disabled
-                                    className="w-full bg-[#101b2a]/50 border border-[#2a3c52] rounded px-4 py-3 text-slate-500 cursor-not-allowed"
+                                    className="w-full bg-primary/50 border border-border rounded px-4 py-3 text-muted cursor-not-allowed"
                                 />
                             </div>
                             <button 
                                 onClick={handleSaveProfile}
-                                className="mt-2 bg-[#d6b980] text-[#101b2a] px-6 py-2 rounded text-xs font-bold uppercase tracking-widest hover:bg-[#c2a56a] transition-colors flex items-center gap-2"
+                                className="mt-2 bg-accent text-primary px-6 py-2 rounded text-xs font-bold uppercase tracking-widest hover:bg-accent-hover transition-colors flex items-center gap-2"
                             >
                                 {isSaved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
                                 {isSaved ? 'Збережено' : 'Зберегти зміни'}
@@ -123,10 +178,10 @@ export const Settings: React.FC<SettingsProps> = ({
                     </section>
 
                      {/* Work Schedule Section */}
-                     <section className="bg-[#1a2736] rounded border border-[#2a3c52] p-6">
+                     <section className="bg-surface rounded border border-border p-6">
                         <div className="flex items-center gap-3 mb-6">
-                            <Clock className="w-5 h-5 text-[#d6b980]" />
-                            <h3 className="text-lg font-serif text-white">Графік роботи</h3>
+                            <Clock className="w-5 h-5 text-accent" />
+                            <h3 className="text-lg font-serif text-main">Графік роботи</h3>
                         </div>
 
                         <div className="space-y-4">
@@ -134,15 +189,15 @@ export const Settings: React.FC<SettingsProps> = ({
                                 {[1, 2, 3, 4, 5, 6, 0].map((dayIdx) => {
                                     const dayConfig = localSchedule[dayIdx];
                                     return (
-                                        <div key={dayIdx} className={`flex items-center gap-4 p-3 rounded border transition-colors ${dayConfig.isWorking ? 'bg-[#101b2a] border-[#2a3c52]' : 'bg-[#101b2a]/30 border-[#1e2d3d] opacity-60'}`}>
+                                        <div key={dayIdx} className={`flex items-center gap-4 p-3 rounded border transition-colors ${dayConfig.isWorking ? 'bg-primary border-border' : 'bg-primary/30 border-border opacity-60'}`}>
                                             <div className="flex items-center gap-3 w-32">
                                                 <input 
                                                     type="checkbox"
                                                     checked={dayConfig.isWorking}
                                                     onChange={() => toggleDay(dayIdx)}
-                                                    className="w-4 h-4 accent-[#d6b980] cursor-pointer rounded border-slate-600 bg-[#1a2736]"
+                                                    className="w-4 h-4 accent-accent cursor-pointer rounded border-border bg-surface"
                                                 />
-                                                <span className={`text-sm font-medium ${dayConfig.isWorking ? 'text-white' : 'text-slate-500'}`}>
+                                                <span className={`text-sm font-medium ${dayConfig.isWorking ? 'text-main' : 'text-muted'}`}>
                                                     {DAYS_OF_WEEK[dayIdx]}
                                                 </span>
                                             </div>
@@ -153,20 +208,20 @@ export const Settings: React.FC<SettingsProps> = ({
                                                     value={dayConfig.start}
                                                     onChange={(e) => updateTime(dayIdx, 'start', e.target.value)}
                                                     disabled={!dayConfig.isWorking}
-                                                    className="bg-[#1a2736] border border-[#2a3c52] rounded px-2 py-1 text-xs text-white focus:border-[#d6b980] disabled:opacity-30 [color-scheme:dark]"
+                                                    className="bg-surface border border-border rounded px-2 py-1 text-xs text-main focus:border-accent disabled:opacity-30 [color-scheme:dark]"
                                                 />
-                                                <span className="text-slate-500">-</span>
+                                                <span className="text-muted">-</span>
                                                 <input 
                                                     type="time" 
                                                     value={dayConfig.end}
                                                     onChange={(e) => updateTime(dayIdx, 'end', e.target.value)}
                                                     disabled={!dayConfig.isWorking}
-                                                    className="bg-[#1a2736] border border-[#2a3c52] rounded px-2 py-1 text-xs text-white focus:border-[#d6b980] disabled:opacity-30 [color-scheme:dark]"
+                                                    className="bg-surface border border-border rounded px-2 py-1 text-xs text-main focus:border-accent disabled:opacity-30 [color-scheme:dark]"
                                                 />
                                             </div>
                                             
                                             {!dayConfig.isWorking && (
-                                                <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">Вихідний</span>
+                                                <span className="text-xs text-muted uppercase tracking-wider font-bold">Вихідний</span>
                                             )}
                                         </div>
                                     );
@@ -174,85 +229,50 @@ export const Settings: React.FC<SettingsProps> = ({
                             </div>
                             <button 
                                 onClick={handleSaveSchedule}
-                                className="mt-4 bg-[#101b2a] border border-[#d6b980] text-[#d6b980] px-6 py-2 rounded text-xs font-bold uppercase tracking-widest hover:bg-[#d6b980] hover:text-[#101b2a] transition-colors flex items-center gap-2"
+                                className="mt-4 bg-primary border border-accent text-accent px-6 py-2 rounded text-xs font-bold uppercase tracking-widest hover:bg-accent hover:text-primary transition-colors flex items-center gap-2"
                             >
                                 {isScheduleSaved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
                                 {isScheduleSaved ? 'Графік оновлено' : 'Оновити графік'}
                             </button>
                         </div>
                     </section>
-
-                    {/* Interface Preferences */}
-                    <section className="bg-[#1a2736] rounded border border-[#2a3c52] p-6">
-                         <div className="flex items-center gap-3 mb-6">
-                            <Moon className="w-5 h-5 text-[#d6b980]" />
-                            <h3 className="text-lg font-serif text-white">Інтерфейс</h3>
-                        </div>
-                        <div className="flex items-center justify-between py-3 border-b border-[#2a3c52]">
-                            <div>
-                                <p className="text-white font-medium">Тема оформлення</p>
-                                <p className="text-xs text-slate-400">Поточна тема: Old Money (Dark)</p>
-                            </div>
-                            <span className="text-[#d6b980] text-xs border border-[#d6b980] px-2 py-1 rounded">Active</span>
-                        </div>
-                         <div className="flex items-center justify-between py-3 border-b border-[#2a3c52]">
-                            <div>
-                                <p className="text-white font-medium">Вигляд Календаря (День)</p>
-                                <p className="text-xs text-slate-400">Відображення записів на день</p>
-                            </div>
-                            <div className="flex bg-[#101b2a] rounded p-1 border border-[#2a3c52]">
-                                <button 
-                                    onClick={() => onUpdateCalendarView('cards')}
-                                    className={`px-3 py-1 text-xs rounded transition-colors ${calendarDailyView === 'cards' ? 'bg-[#d6b980] text-[#101b2a]' : 'text-slate-400'}`}
-                                >
-                                    Cards
-                                </button>
-                                <button 
-                                    onClick={() => onUpdateCalendarView('timeline')}
-                                    className={`px-3 py-1 text-xs rounded transition-colors ${calendarDailyView === 'timeline' ? 'bg-[#d6b980] text-[#101b2a]' : 'text-slate-400'}`}
-                                >
-                                    Timeline
-                                </button>
-                            </div>
-                        </div>
-                    </section>
                 </div>
 
                 {/* Sidebar / Status Column */}
                 <div className="space-y-6">
-                    <div className="bg-gradient-to-br from-[#d6b980] to-[#b09b6a] rounded p-6 text-[#101b2a]">
+                    <div className="bg-gradient-to-br from-accent to-accent-hover rounded p-6 text-primary">
                         <div className="flex items-center justify-between mb-4">
                             <CrownIcon className="w-8 h-8" />
-                            <span className="text-xs font-bold uppercase bg-[#101b2a]/10 px-2 py-1 rounded">Active</span>
+                            <span className="text-xs font-bold uppercase bg-primary/20 px-2 py-1 rounded">Active</span>
                         </div>
                         <h3 className="font-serif text-xl font-bold mb-1">{user.subscriptionPlan === 'pro' ? 'Gold Club' : user.subscriptionPlan === 'premium' ? 'Platinum' : 'Start'}</h3>
                         <p className="text-sm opacity-80 mb-6">Ваш тарифний план активний.</p>
-                        <button className="w-full bg-[#101b2a] text-[#d6b980] py-3 rounded text-xs font-bold uppercase tracking-widest hover:bg-[#1a2736]">
+                        <button className="w-full bg-primary text-accent py-3 rounded text-xs font-bold uppercase tracking-widest hover:bg-surface">
                             Керувати підпискою
                         </button>
                     </div>
 
-                    <div className="bg-[#1a2736] rounded border border-[#2a3c52] p-4 space-y-2">
-                         <button className="w-full flex items-center justify-between p-3 hover:bg-[#2a3c52] rounded group transition-colors">
+                    <div className="bg-surface rounded border border-border p-4 space-y-2">
+                         <button className="w-full flex items-center justify-between p-3 hover:bg-surface-soft rounded group transition-colors">
                             <div className="flex items-center gap-3">
-                                <Bell className="w-4 h-4 text-slate-400 group-hover:text-[#d6b980]" />
-                                <span className="text-slate-300 text-sm group-hover:text-white">Сповіщення</span>
+                                <Bell className="w-4 h-4 text-muted group-hover:text-accent" />
+                                <span className="text-main text-sm">Сповіщення</span>
                             </div>
-                            <ChevronRight className="w-4 h-4 text-slate-500" />
+                            <ChevronRight className="w-4 h-4 text-muted" />
                         </button>
-                         <button className="w-full flex items-center justify-between p-3 hover:bg-[#2a3c52] rounded group transition-colors">
+                         <button className="w-full flex items-center justify-between p-3 hover:bg-surface-soft rounded group transition-colors">
                             <div className="flex items-center gap-3">
-                                <Shield className="w-4 h-4 text-slate-400 group-hover:text-[#d6b980]" />
-                                <span className="text-slate-300 text-sm group-hover:text-white">Безпека</span>
+                                <Shield className="w-4 h-4 text-muted group-hover:text-accent" />
+                                <span className="text-main text-sm">Безпека</span>
                             </div>
-                            <ChevronRight className="w-4 h-4 text-slate-500" />
+                            <ChevronRight className="w-4 h-4 text-muted" />
                         </button>
-                         <button className="w-full flex items-center justify-between p-3 hover:bg-[#2a3c52] rounded group transition-colors">
+                         <button className="w-full flex items-center justify-between p-3 hover:bg-surface-soft rounded group transition-colors">
                             <div className="flex items-center gap-3">
-                                <CreditCard className="w-4 h-4 text-slate-400 group-hover:text-[#d6b980]" />
-                                <span className="text-slate-300 text-sm group-hover:text-white">Платежі</span>
+                                <CreditCard className="w-4 h-4 text-muted group-hover:text-accent" />
+                                <span className="text-main text-sm">Платежі</span>
                             </div>
-                            <ChevronRight className="w-4 h-4 text-slate-500" />
+                            <ChevronRight className="w-4 h-4 text-muted" />
                         </button>
                     </div>
 
