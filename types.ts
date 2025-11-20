@@ -4,6 +4,7 @@ export enum AppView {
   DASHBOARD = 'DASHBOARD',
   CALENDAR = 'CALENDAR',
   CLIENTS = 'CLIENTS',
+  SERVICES = 'SERVICES', // New View
   AI_STYLIST = 'AI_STYLIST',
   ANALYTICS = 'ANALYTICS',
   SETTINGS = 'SETTINGS',
@@ -18,6 +19,7 @@ export enum ServiceType {
 
 export type PaymentMethod = 'cash' | 'card';
 export type TransactionType = 'income' | 'expense';
+export type CalendarDailyView = 'cards' | 'timeline';
 
 export enum ExpenseCategory {
   RENT = 'Оренда',
@@ -39,6 +41,14 @@ export interface User {
   subscriptionPlan?: 'start' | 'pro' | 'premium';
 }
 
+export interface ServiceItem {
+  id: string;
+  title: string;
+  price: number;
+  duration: number; // in minutes
+  description?: string;
+}
+
 export interface Client {
   id: string;
   name: string;
@@ -54,7 +64,7 @@ export interface Appointment {
   clientId: string;
   clientName: string;
   date: Date;
-  service: ServiceType;
+  service: string; // Changed from ServiceType enum to string to support dynamic services
   durationMinutes: number;
   price: number;
   status: 'scheduled' | 'completed' | 'cancelled';

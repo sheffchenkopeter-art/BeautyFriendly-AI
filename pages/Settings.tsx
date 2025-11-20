@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { User, Bell, Shield, CreditCard, ChevronRight, Moon, LogOut, Save, Check, Calendar, Clock } from 'lucide-react';
-import { User as UserType, WorkSchedule } from '../types';
+import { User as UserType, WorkSchedule, CalendarDailyView } from '../types';
 
 interface SettingsProps {
     user: UserType;
@@ -8,13 +9,15 @@ interface SettingsProps {
     onLogout: () => void;
     workSchedule: WorkSchedule;
     onUpdateSchedule: (schedule: WorkSchedule) => void;
+    calendarDailyView: CalendarDailyView;
+    onUpdateCalendarView: (view: CalendarDailyView) => void;
 }
 
 const DAYS_OF_WEEK = [
   'Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'
 ];
 
-export const Settings: React.FC<SettingsProps> = ({ user, onUpdateUser, onLogout, workSchedule, onUpdateSchedule }) => {
+export const Settings: React.FC<SettingsProps> = ({ user, onUpdateUser, onLogout, workSchedule, onUpdateSchedule, calendarDailyView, onUpdateCalendarView }) => {
     const [name, setName] = useState(user.name);
     const [isSaved, setIsSaved] = useState(false);
     const [localSchedule, setLocalSchedule] = useState<WorkSchedule>(workSchedule);
@@ -171,6 +174,26 @@ export const Settings: React.FC<SettingsProps> = ({ user, onUpdateUser, onLogout
                                 <p className="text-xs text-slate-400">Поточна тема: Old Money (Dark)</p>
                             </div>
                             <span className="text-[#d6b980] text-xs border border-[#d6b980] px-2 py-1 rounded">Active</span>
+                        </div>
+                         <div className="flex items-center justify-between py-3 border-b border-[#2a3c52]">
+                            <div>
+                                <p className="text-white font-medium">Вигляд Календаря (День)</p>
+                                <p className="text-xs text-slate-400">Відображення записів на день</p>
+                            </div>
+                            <div className="flex bg-[#101b2a] rounded p-1 border border-[#2a3c52]">
+                                <button 
+                                    onClick={() => onUpdateCalendarView('cards')}
+                                    className={`px-3 py-1 text-xs rounded transition-colors ${calendarDailyView === 'cards' ? 'bg-[#d6b980] text-[#101b2a]' : 'text-slate-400'}`}
+                                >
+                                    Cards
+                                </button>
+                                <button 
+                                    onClick={() => onUpdateCalendarView('timeline')}
+                                    className={`px-3 py-1 text-xs rounded transition-colors ${calendarDailyView === 'timeline' ? 'bg-[#d6b980] text-[#101b2a]' : 'text-slate-400'}`}
+                                >
+                                    Timeline
+                                </button>
+                            </div>
                         </div>
                     </section>
                 </div>

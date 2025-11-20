@@ -4,20 +4,25 @@ import { Navigation } from './components/Navigation';
 import { Dashboard } from './pages/Dashboard';
 import { CalendarView } from './pages/CalendarView';
 import { ClientsView } from './pages/ClientsView';
+import { ServicesView } from './pages/ServicesView'; // New
 import { AIStylist } from './pages/AIStylist';
 import { Login } from './pages/Login';
 import { Subscription } from './pages/Subscription';
 import { Settings } from './pages/Settings';
 import { Analytics } from './pages/Analytics';
-import { AppView, User, Client, Appointment, WorkSchedule, WalletState, Transaction, PaymentMethod, ExpenseCategory } from './types';
-import { MOCK_CLIENTS, MOCK_APPOINTMENTS, DEFAULT_SCHEDULE, INITIAL_WALLET_STATE } from './constants';
+import { AppView, User, Client, Appointment, WorkSchedule, WalletState, Transaction, PaymentMethod, ExpenseCategory, CalendarDailyView, ServiceItem } from './types';
+import { MOCK_CLIENTS, MOCK_APPOINTMENTS, DEFAULT_SCHEDULE, INITIAL_WALLET_STATE, DEFAULT_SERVICES } from './constants';
 
 function App() {
   const [currentView, setCurrentView] = useState<AppView>(AppView.DASHBOARD);
   const [user, setUser] = useState<User | null>(null);
   
+  // Preferences
+  const [calendarDailyView, setCalendarDailyView] = useState<CalendarDailyView>('cards');
+
   // Data State
   const [clients, setClients] = useState<Client[]>(MOCK_CLIENTS);
+  const [services, setServices] = useState<ServiceItem[]>(DEFAULT_SERVICES); // Services State
   const [appointments, setAppointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
   const [workSchedule, setWorkSchedule] = useState<WorkSchedule>(DEFAULT_SCHEDULE);
   
@@ -37,47 +42,40 @@ function App() {
       let hasChanges = false;
 
       const updatedAppointments = appointments.map(app => {
-        // If appointment is scheduled AND older than 12 hours
         if (app.status === 'scheduled' && new Date(app.date) < cutoffTime) {
            hasChanges = true;
-           // Logic: Auto-close as Cash (default safety mechanism)
            cashToAdd += app.price;
-           
            newTransactions.push({
              id: `auto-${Date.now()}-${app.id}`,
-             date: new Date(), // Transaction recorded now
+             date: new Date(),
              amount: app.price,
              type: 'income',
              category: ExpenseCategory.SERVICE,
              description: `Авто-закриття: ${app.service} (${app.clientName})`,
              paymentMethod: 'cash'
            });
-           
            return { ...app, status: 'completed' as const, paymentMethod: 'cash' as PaymentMethod };
         }
         return app;
       });
 
-      // Only update state if changes actually happened to prevent render loops
       if (hasChanges) {
         setAppointments(updatedAppointments);
         setWallets(prev => ({ ...prev, cash: prev.cash + cashToAdd }));
         setTransactions(prev => [...prev, ...newTransactions]);
       }
     };
-
     checkAutoClose();
-  }, []); // Run once on mount
+  }, []);
 
   // --- Auth Handlers ---
   const handleLogin = (email: string) => {
-    // Mock user data for demo
     setUser({
       id: 'u1',
       name: 'Олександра', 
       email: email,
       role: 'Top Stylist',
-      hasSubscription: false // User starts without subscription
+      hasSubscription: false
     });
   };
 
@@ -93,9 +91,7 @@ function App() {
   };
 
   const handleUpdateUser = (updates: Partial<User>) => {
-      if (user) {
-          setUser({ ...user, ...updates });
-      }
+      if (user) setUser({ ...user, ...updates });
   }
 
   // --- Data Handlers ---
@@ -103,28 +99,41 @@ function App() {
     setClients(prev => [...prev, newClient]);
   };
 
+  // Services Handlers
+  const handleAddService = (newService: ServiceItem) => {
+    setServices(prev => [...prev, newService]);
+  };
+
+  const handleUpdateService = (updatedService: ServiceItem) => {
+    setServices(prev => prev.map(s => s.id === updatedService.id ? updatedService : s));
+  };
+
+  const handleDeleteService = (id: string) => {
+    setServices(prev => prev.filter(s => s.id !== id));
+  };
+
+  // Appointment Handlers
   const handleAddAppointment = (newApp: Appointment) => {
     setAppointments(prev => [...prev, newApp]);
   };
 
-  // Manual close (Checkout)
+  const handleRescheduleAppointment = (id: string, newDate: Date, newDuration: number) => {
+    setAppointments(prev => prev.map(a => a.id === id ? { ...a, date: newDate, durationMinutes: newDuration } : a));
+  };
+
+  const handleCancelAppointment = (id: string) => {
+    setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: 'cancelled' } : a));
+  };
+
   const handleCloseAppointment = (id: string, method: PaymentMethod, finalPrice?: number) => {
       const app = appointments.find(a => a.id === id);
       if (!app || app.status === 'completed') return;
 
-      // Determine final price (use edited price if provided, otherwise default)
       const priceToUse = finalPrice !== undefined ? finalPrice : app.price;
 
-      // Update Appointment Status and Price history
       setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: 'completed', paymentMethod: method, price: priceToUse } : a));
+      setWallets(prev => ({ ...prev, [method]: prev[method] + priceToUse }));
 
-      // Update Wallet Balance
-      setWallets(prev => ({
-          ...prev,
-          [method]: prev[method] + priceToUse
-      }));
-
-      // Add Income Transaction
       const newTransaction: Transaction = {
           id: Date.now().toString(),
           date: new Date(),
@@ -138,13 +147,7 @@ function App() {
   };
 
   const handleAddExpense = (amount: number, category: ExpenseCategory, description: string, method: PaymentMethod) => {
-      // Update Wallet (subtract money)
-      setWallets(prev => ({
-          ...prev,
-          [method]: prev[method] - amount
-      }));
-
-      // Add Expense Transaction
+      setWallets(prev => ({ ...prev, [method]: prev[method] - amount }));
       const newTransaction: Transaction = {
           id: Date.now().toString(),
           date: new Date(),
@@ -159,17 +162,9 @@ function App() {
 
   // --- Render Logic ---
 
-  // 1. Authentication Guard
-  if (!user) {
-    return <Login onLogin={handleLogin} />;
-  }
+  if (!user) return <Login onLogin={handleLogin} />;
+  if (!user.hasSubscription) return <Subscription onSubscribe={handleSubscribe} />;
 
-  // 2. Subscription Guard
-  if (!user.hasSubscription) {
-    return <Subscription onSubscribe={handleSubscribe} />;
-  }
-
-  // 3. Main App View
   const renderContent = () => {
     switch (currentView) {
       case AppView.DASHBOARD:
@@ -183,12 +178,24 @@ function App() {
         return <CalendarView 
                   appointments={appointments} 
                   clients={clients} 
+                  services={services} // Pass services
                   onAddAppointment={handleAddAppointment}
                   workSchedule={workSchedule}
                   onCloseAppointment={handleCloseAppointment}
+                  onRescheduleAppointment={handleRescheduleAppointment}
+                  onCancelAppointment={handleCancelAppointment}
+                  dailyViewMode={calendarDailyView}
+                  onToggleDailyView={setCalendarDailyView}
                />;
       case AppView.CLIENTS:
         return <ClientsView clients={clients} onAddClient={handleAddClient} />;
+      case AppView.SERVICES:
+        return <ServicesView 
+                  services={services} 
+                  onAddService={handleAddService} 
+                  onUpdateService={handleUpdateService}
+                  onDeleteService={handleDeleteService}
+               />;
       case AppView.AI_STYLIST:
         return <AIStylist />;
       case AppView.ANALYTICS:
@@ -204,6 +211,8 @@ function App() {
                   onLogout={handleLogout}
                   workSchedule={workSchedule}
                   onUpdateSchedule={setWorkSchedule}
+                  calendarDailyView={calendarDailyView}
+                  onUpdateCalendarView={setCalendarDailyView}
                />;
       default:
         return <Dashboard 

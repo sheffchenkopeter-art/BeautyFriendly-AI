@@ -1,10 +1,18 @@
 
-import { Client, Appointment, ServiceType, StyleTrend, WorkSchedule, WalletState } from './types';
+import { Client, Appointment, ServiceType, StyleTrend, WorkSchedule, WalletState, ServiceItem } from './types';
 
 export const INITIAL_WALLET_STATE: WalletState = {
   cash: 0, 
   card: 0 
 };
+
+export const DEFAULT_SERVICES: ServiceItem[] = [
+  { id: 's1', title: 'Жіноча стрижка', price: 500, duration: 60, description: 'Миття, стрижка, укладка' },
+  { id: 's2', title: 'Чоловіча стрижка', price: 400, duration: 45, description: 'Стрижка машинкою та ножицями' },
+  { id: 's3', title: 'Фарбування (корінь)', price: 1200, duration: 90, description: 'Фарбування відрослих коренів' },
+  { id: 's4', title: 'Складне фарбування', price: 3500, duration: 240, description: 'AirTouch, Balayage, Shatush' },
+  { id: 's5', title: 'Укладка', price: 600, duration: 60, description: 'Вечірня або денна укладка' },
+];
 
 export const MOCK_CLIENTS: Client[] = [
   {
@@ -39,7 +47,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     clientId: '1',
     clientName: 'Олена Коваль',
     date: new Date(new Date().setHours(10, 0, 0, 0)), // Today 10:00
-    service: ServiceType.COLORING,
+    service: 'Фарбування (корінь)',
     durationMinutes: 120,
     price: 2500,
     status: 'scheduled'
@@ -49,7 +57,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     clientId: '3',
     clientName: 'Андрій Мельник',
     date: new Date(new Date().setHours(13, 30, 0, 0)), // Today 13:30
-    service: ServiceType.HAIRCUT,
+    service: 'Чоловіча стрижка',
     durationMinutes: 45,
     price: 500,
     status: 'scheduled'
@@ -59,7 +67,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     clientId: '2',
     clientName: 'Марина Петренко',
     date: new Date(new Date().setHours(15, 0, 0, 0)), // Today 15:00
-    service: ServiceType.STYLING,
+    service: 'Укладка',
     durationMinutes: 60,
     price: 800,
     status: 'scheduled'

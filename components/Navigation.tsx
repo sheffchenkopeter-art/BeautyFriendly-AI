@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Calendar, Users, Sparkles, LayoutDashboard, LogOut, Settings, BarChart3 } from 'lucide-react';
+import { Calendar, Users, Sparkles, LayoutDashboard, LogOut, Settings, BarChart3, Scissors } from 'lucide-react';
 import { AppView, User } from '../types';
 
 interface NavigationProps {
@@ -14,6 +14,7 @@ export const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChang
   const navItems = [
     { id: AppView.DASHBOARD, icon: LayoutDashboard, label: 'Головна' },
     { id: AppView.CALENDAR, icon: Calendar, label: 'Календар' },
+    { id: AppView.SERVICES, icon: Scissors, label: 'Послуги' }, // Added Services
     { id: AppView.AI_STYLIST, icon: Sparkles, label: 'AI Стиліст' },
     { id: AppView.CLIENTS, icon: Users, label: 'Клієнти' },
     { id: AppView.ANALYTICS, icon: BarChart3, label: 'Аналітика' },
