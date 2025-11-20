@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Sparkles, Lock, Mail, ArrowRight, Loader2, User } from 'lucide-react';
+import { Lock, Mail, ArrowRight, Loader2, User } from 'lucide-react';
 
 interface LoginProps {
   onLogin: (email: string) => void;
@@ -28,11 +29,12 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
     <div className="min-h-screen bg-[#101b2a] flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-[#1a2736] rounded-none shadow-2xl border border-[#d6b980]/20 overflow-hidden">
         <div className="bg-[#0d1623] p-10 text-center border-b border-[#1e2d3d]">
-          <div className="w-12 h-12 border border-[#d6b980] flex items-center justify-center mx-auto mb-6 rotate-45">
-            <Sparkles className="w-6 h-6 text-[#d6b980] -rotate-45" />
+          {/* BF Logo Implementation */}
+          <div className="w-24 h-24 rounded-full border-[3px] border-[#d6b980] flex items-center justify-center mx-auto mb-6 shadow-[0_0_25px_rgba(214,185,128,0.15)] bg-gradient-to-b from-[#d6b980]/10 to-transparent">
+            <span className="text-5xl font-serif text-[#d6b980] tracking-tighter font-medium italic ml-[-2px]">BF</span>
           </div>
-          <h1 className="text-3xl font-serif text-[#d6b980] mb-2">BeautyFriendly</h1>
-          <p className="text-slate-500 text-xs uppercase tracking-widest">AI Assistant for Stylists</p>
+          <h1 className="text-2xl font-serif text-[#d6b980] mb-2 uppercase tracking-[0.2em]">Beauty Friendly</h1>
+          <p className="text-slate-500 text-xs uppercase tracking-widest mt-3">AI Assistant for Stylists</p>
         </div>
 
         <div className="p-8">

@@ -14,7 +14,7 @@ export const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChang
   const navItems = [
     { id: AppView.DASHBOARD, icon: LayoutDashboard, label: 'Головна' },
     { id: AppView.CALENDAR, icon: Calendar, label: 'Календар' },
-    { id: AppView.SERVICES, icon: Scissors, label: 'Послуги' }, // Added Services
+    { id: AppView.SERVICES, icon: Scissors, label: 'Послуги' },
     { id: AppView.AI_STYLIST, icon: Sparkles, label: 'AI Стиліст' },
     { id: AppView.CLIENTS, icon: Users, label: 'Клієнти' },
     { id: AppView.ANALYTICS, icon: BarChart3, label: 'Аналітика' },
@@ -26,10 +26,11 @@ export const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChang
       {/* Desktop Sidebar */}
       <div className="hidden md:flex flex-col w-64 bg-[#0d1623] border-r border-[#1e2d3d] text-white h-screen fixed left-0 top-0 p-6 z-50">
         <div className="flex items-center gap-3 mb-12 px-2">
-          <div className="w-8 h-8 bg-[#d6b980] rounded flex items-center justify-center text-[#101b2a]">
-            <Sparkles className="w-5 h-5" />
+          {/* Small BF Logo for Sidebar */}
+          <div className="w-10 h-10 rounded-full border-2 border-[#d6b980] flex items-center justify-center bg-[#101b2a] shrink-0 shadow-[0_0_10px_rgba(214,185,128,0.1)]">
+             <span className="text-lg font-serif text-[#d6b980] tracking-tighter italic font-bold ml-[-1px]">BF</span>
           </div>
-          <h1 className="text-xl font-bold tracking-wide font-serif text-[#d6b980]">BeautyFriendly</h1>
+          <h1 className="text-lg font-bold tracking-widest font-serif text-[#d6b980] uppercase whitespace-nowrap">Beauty Friendly</h1>
         </div>
         
         <nav className="space-y-2 flex-1">
