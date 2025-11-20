@@ -1,21 +1,55 @@
 import React, { useState } from 'react';
-import { User, Bell, Shield, CreditCard, ChevronRight, Moon, LogOut, Save, Check } from 'lucide-react';
-import { User as UserType } from '../types';
+import { User, Bell, Shield, CreditCard, ChevronRight, Moon, LogOut, Save, Check, Calendar, Clock } from 'lucide-react';
+import { User as UserType, WorkSchedule } from '../types';
 
 interface SettingsProps {
     user: UserType;
     onUpdateUser: (updatedUser: Partial<UserType>) => void;
     onLogout: () => void;
+    workSchedule: WorkSchedule;
+    onUpdateSchedule: (schedule: WorkSchedule) => void;
 }
 
-export const Settings: React.FC<SettingsProps> = ({ user, onUpdateUser, onLogout }) => {
+const DAYS_OF_WEEK = [
+  'Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'
+];
+
+export const Settings: React.FC<SettingsProps> = ({ user, onUpdateUser, onLogout, workSchedule, onUpdateSchedule }) => {
     const [name, setName] = useState(user.name);
     const [isSaved, setIsSaved] = useState(false);
+    const [localSchedule, setLocalSchedule] = useState<WorkSchedule>(workSchedule);
+    const [isScheduleSaved, setIsScheduleSaved] = useState(false);
 
-    const handleSave = () => {
+    const handleSaveProfile = () => {
         onUpdateUser({ name });
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 2000);
+    };
+
+    const handleSaveSchedule = () => {
+        onUpdateSchedule(localSchedule);
+        setIsScheduleSaved(true);
+        setTimeout(() => setIsScheduleSaved(false), 2000);
+    };
+
+    const toggleDay = (dayIndex: number) => {
+        setLocalSchedule(prev => ({
+            ...prev,
+            [dayIndex]: {
+                ...prev[dayIndex],
+                isWorking: !prev[dayIndex].isWorking
+            }
+        }));
+    };
+
+    const updateTime = (dayIndex: number, field: 'start' | 'end', value: string) => {
+        setLocalSchedule(prev => ({
+            ...prev,
+            [dayIndex]: {
+                ...prev[dayIndex],
+                [field]: value
+            }
+        }));
     };
 
     return (
@@ -55,21 +89,72 @@ export const Settings: React.FC<SettingsProps> = ({ user, onUpdateUser, onLogout
                                     className="w-full bg-[#101b2a]/50 border border-[#2a3c52] rounded px-4 py-3 text-slate-500 cursor-not-allowed"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-xs uppercase tracking-widest text-slate-500 mb-2">Роль</label>
-                                <input 
-                                    type="text" 
-                                    value={user.role}
-                                    disabled
-                                    className="w-full bg-[#101b2a]/50 border border-[#2a3c52] rounded px-4 py-3 text-slate-500 cursor-not-allowed"
-                                />
-                            </div>
                             <button 
-                                onClick={handleSave}
+                                onClick={handleSaveProfile}
                                 className="mt-2 bg-[#d6b980] text-[#101b2a] px-6 py-2 rounded text-xs font-bold uppercase tracking-widest hover:bg-[#c2a56a] transition-colors flex items-center gap-2"
                             >
                                 {isSaved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
                                 {isSaved ? 'Збережено' : 'Зберегти зміни'}
+                            </button>
+                        </div>
+                    </section>
+
+                     {/* Work Schedule Section */}
+                     <section className="bg-[#1a2736] rounded border border-[#2a3c52] p-6">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Clock className="w-5 h-5 text-[#d6b980]" />
+                            <h3 className="text-lg font-serif text-white">Графік роботи</h3>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-1 gap-3">
+                                {[1, 2, 3, 4, 5, 6, 0].map((dayIdx) => {
+                                    const dayConfig = localSchedule[dayIdx];
+                                    return (
+                                        <div key={dayIdx} className={`flex items-center gap-4 p-3 rounded border transition-colors ${dayConfig.isWorking ? 'bg-[#101b2a] border-[#2a3c52]' : 'bg-[#101b2a]/30 border-[#1e2d3d] opacity-60'}`}>
+                                            <div className="flex items-center gap-3 w-32">
+                                                <input 
+                                                    type="checkbox"
+                                                    checked={dayConfig.isWorking}
+                                                    onChange={() => toggleDay(dayIdx)}
+                                                    className="w-4 h-4 accent-[#d6b980] cursor-pointer rounded border-slate-600 bg-[#1a2736]"
+                                                />
+                                                <span className={`text-sm font-medium ${dayConfig.isWorking ? 'text-white' : 'text-slate-500'}`}>
+                                                    {DAYS_OF_WEEK[dayIdx]}
+                                                </span>
+                                            </div>
+                                            
+                                            <div className="flex items-center gap-2 flex-1">
+                                                <input 
+                                                    type="time" 
+                                                    value={dayConfig.start}
+                                                    onChange={(e) => updateTime(dayIdx, 'start', e.target.value)}
+                                                    disabled={!dayConfig.isWorking}
+                                                    className="bg-[#1a2736] border border-[#2a3c52] rounded px-2 py-1 text-xs text-white focus:border-[#d6b980] disabled:opacity-30 [color-scheme:dark]"
+                                                />
+                                                <span className="text-slate-500">-</span>
+                                                <input 
+                                                    type="time" 
+                                                    value={dayConfig.end}
+                                                    onChange={(e) => updateTime(dayIdx, 'end', e.target.value)}
+                                                    disabled={!dayConfig.isWorking}
+                                                    className="bg-[#1a2736] border border-[#2a3c52] rounded px-2 py-1 text-xs text-white focus:border-[#d6b980] disabled:opacity-30 [color-scheme:dark]"
+                                                />
+                                            </div>
+                                            
+                                            {!dayConfig.isWorking && (
+                                                <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">Вихідний</span>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            <button 
+                                onClick={handleSaveSchedule}
+                                className="mt-4 bg-[#101b2a] border border-[#d6b980] text-[#d6b980] px-6 py-2 rounded text-xs font-bold uppercase tracking-widest hover:bg-[#d6b980] hover:text-[#101b2a] transition-colors flex items-center gap-2"
+                            >
+                                {isScheduleSaved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
+                                {isScheduleSaved ? 'Графік оновлено' : 'Оновити графік'}
                             </button>
                         </div>
                     </section>

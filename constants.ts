@@ -1,4 +1,4 @@
-import { Client, Appointment, ServiceType, StyleTrend } from './types';
+import { Client, Appointment, ServiceType, StyleTrend, WorkSchedule } from './types';
 
 export const MOCK_CLIENTS: Client[] = [
   {
@@ -74,3 +74,13 @@ export const INITIAL_TRENDS: StyleTrend[] = [
     imageUrl: 'https://picsum.photos/id/342/400/300'
   }
 ];
+
+export const DEFAULT_SCHEDULE: WorkSchedule = {
+  0: { isWorking: false, start: '10:00', end: '19:00' }, // Sunday
+  1: { isWorking: true, start: '10:00', end: '19:00' },  // Monday
+  2: { isWorking: true, start: '10:00', end: '19:00' },  // Tuesday
+  3: { isWorking: true, start: '10:00', end: '19:00' },  // Wednesday
+  4: { isWorking: true, start: '10:00', end: '19:00' },  // Thursday
+  5: { isWorking: true, start: '10:00', end: '19:00' },  // Friday
+  6: { isWorking: true, start: '10:00', end: '16:00' },  // Saturday
+};

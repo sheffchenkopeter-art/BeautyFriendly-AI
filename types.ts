@@ -60,3 +60,11 @@ export interface StyleTrend {
   description: string;
   imageUrl: string;
 }
+
+export interface DaySchedule {
+  isWorking: boolean;
+  start: string; // "10:00"
+  end: string;   // "19:00"
+}
+
+export type WorkSchedule = Record<number, DaySchedule>; // Key is 0 (Sunday) to 6 (Saturday)
