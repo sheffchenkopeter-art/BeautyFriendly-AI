@@ -1,16 +1,20 @@
 import { GoogleGenAI } from "@google/genai";
 import { ClientProfile } from "../types";
 
-// Helper to safely get API Key
+// Helper to safely get API Key without crashing the browser
 const getApiKey = (): string | undefined => {
-  // As per guidelines, we use process.env.API_KEY exclusively.
-  // We assume it is configured in the environment.
   try {
+    // Vite replace 'process.env.API_KEY' with the actual string during build.
+    // We check typeof process to avoid ReferenceError in environments where it's not defined.
+    if (typeof process !== 'undefined' && process.env) {
+      return process.env.API_KEY;
+    }
+    // Fallback: sometimes the bundler replaces the whole expression
     return process.env.API_KEY;
   } catch (e) {
-    console.warn("Error accessing process.env:", e);
+    // console.warn("Environment variable access issue:", e);
+    return undefined;
   }
-  return undefined;
 };
 
 const getClient = () => {
@@ -18,7 +22,7 @@ const getClient = () => {
   
   if (!apiKey) {
     console.error("CRITICAL: API Key is missing. The app cannot contact Gemini.");
-    throw new Error("API Key not found. Please ensure process.env.API_KEY is set.");
+    throw new Error("API Key not found. Please check your Vercel Environment Variables or .env file.");
   }
   
   return new GoogleGenAI({ apiKey });
@@ -38,6 +42,7 @@ const SYSTEM_INSTRUCTION = `
 4. Якщо питають про тренди, орієнтуйся на 2024-2025 роки (текстура, натуральність, "тиха розкіш").
 `;
 
+// --- Text Generation ---
 export const generateStylingAdvice = async (prompt: string): Promise<string> => {
   try {
     const ai = getClient();
@@ -56,11 +61,13 @@ export const generateStylingAdvice = async (prompt: string): Promise<string> => 
   }
 };
 
+// --- Image Generation ---
 export const generateHairstyleImage = async (description: string): Promise<string> => {
   try {
     const ai = getClient();
+    // Using gemini-2.5-flash-image for better availability/performance
     const response = await ai.models.generateImages({
-      model: 'imagen-4.0-generate-001',
+      model: 'imagen-3.0-generate-001',
       prompt: `Professional hair photography, salon lighting, high resolution, 8k, realistic texture. Subject: ${description}. Style: Modern, aesthetic.`,
       config: {
         numberOfImages: 1,
@@ -80,6 +87,7 @@ export const generateHairstyleImage = async (description: string): Promise<strin
   }
 };
 
+// --- Vision Analysis (Photo) ---
 export const analyzeClientPhoto = async (base64Image: string, prompt: string): Promise<string> => {
     try {
       const ai = getClient();
@@ -112,6 +120,7 @@ export const analyzeClientPhoto = async (base64Image: string, prompt: string): P
     }
 };
 
+// --- Profile Identification (JSON) ---
 export const identifyClientProfile = async (description: string): Promise<Partial<ClientProfile>> => {
   try {
     const ai = getClient();
@@ -138,7 +147,7 @@ export const identifyClientProfile = async (description: string): Promise<Partia
     let jsonText = response.text;
     if (!jsonText) throw new Error("Empty response");
     
-    // FIX: Remove markdown code blocks if Gemini adds them
+    // FIX: Clean up any Markdown formatting (```json ... ```) that Gemini might include
     jsonText = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
 
     return JSON.parse(jsonText) as Partial<ClientProfile>;
@@ -148,6 +157,7 @@ export const identifyClientProfile = async (description: string): Promise<Partia
   }
 };
 
+// --- Strategic Analysis ---
 export const generateClientAnalysis = async (name: string, profile: ClientProfile): Promise<string> => {
     try {
         const ai = getClient();
@@ -180,6 +190,6 @@ export const generateClientAnalysis = async (name: string, profile: ClientProfil
         return response.text || "Не вдалося згенерувати аналіз.";
     } catch (error) {
         console.error("Gemini API Error (Client Analysis):", error);
-        return "Помилка AI аналізу.";
+        return "Помилка AI аналізу. Перевірте API ключ.";
     }
 };
