@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   format, addDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, 
@@ -5,7 +6,7 @@ import {
   addWeeks, subWeeks, subDays, getDay
 } from 'date-fns';
 import { uk } from 'date-fns/locale';
-import { Scissors, Plus, X, Save, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, LayoutList, Grid, Columns, AlertCircle, CheckCircle, CreditCard, Wallet } from 'lucide-react';
+import { Scissors, Plus, X, Save, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, LayoutList, Grid, Columns, AlertCircle, CheckCircle, CreditCard, Wallet, Edit2 } from 'lucide-react';
 import { Appointment, Client, ServiceType, WorkSchedule, PaymentMethod } from '../types';
 
 interface CalendarViewProps {
@@ -13,7 +14,7 @@ interface CalendarViewProps {
     clients: Client[];
     onAddAppointment: (appointment: Appointment) => void;
     workSchedule: WorkSchedule;
-    onCloseAppointment: (id: string, method: PaymentMethod) => void;
+    onCloseAppointment: (id: string, method: PaymentMethod, finalPrice: number) => void;
 }
 
 type ViewMode = 'day' | 'week' | 'month';
@@ -25,6 +26,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ appointments, client
   
   // Checkout Modal State
   const [checkoutApp, setCheckoutApp] = useState<Appointment | null>(null);
+  const [checkoutPrice, setCheckoutPrice] = useState<string>('');
 
   // Form State
   const [formClientId, setFormClientId] = useState('');
@@ -67,6 +69,11 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ appointments, client
       setIsModalOpen(true);
   };
 
+  const handleInitiateCheckout = (app: Appointment) => {
+      setCheckoutApp(app);
+      setCheckoutPrice(app.price.toString());
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
       const client = clients.find(c => c.id === formClientId);
@@ -92,9 +99,11 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ appointments, client
   };
 
   const handleCheckout = (method: PaymentMethod) => {
-      if (checkoutApp) {
-          onCloseAppointment(checkoutApp.id, method);
+      if (checkoutApp && checkoutPrice) {
+          const finalPrice = parseFloat(checkoutPrice) || checkoutApp.price;
+          onCloseAppointment(checkoutApp.id, method, finalPrice);
           setCheckoutApp(null);
+          setCheckoutPrice('');
       }
   }
 
@@ -215,7 +224,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ appointments, client
                                         </span>
                                         {app.status === 'scheduled' && (
                                             <button 
-                                                onClick={() => setCheckoutApp(app)}
+                                                onClick={() => handleInitiateCheckout(app)}
                                                 className="bg-[#d6b980] text-[#101b2a] px-3 py-1 text-xs font-bold uppercase tracking-widest rounded hover:bg-[#c2a56a] transition-colors"
                                             >
                                                 Розрахувати
@@ -282,7 +291,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ appointments, client
                             {dayApps.map(app => (
                                 <div 
                                     key={app.id} 
-                                    onClick={() => app.status === 'scheduled' && setCheckoutApp(app)}
+                                    onClick={() => app.status === 'scheduled' && handleInitiateCheckout(app)}
                                     className={`p-2 rounded border text-xs transition-colors cursor-pointer group relative z-20 ${
                                         app.status === 'completed' 
                                         ? 'bg-[#101b2a] border-green-900/50 opacity-60' 
@@ -504,9 +513,17 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ appointments, client
                      <p className="text-slate-400 text-sm">{checkoutApp.clientName} — {checkoutApp.service}</p>
                  </div>
 
-                 <div className="bg-[#101b2a] p-4 rounded border border-[#2a3c52] mb-6 text-center">
-                     <span className="text-xs uppercase tracking-widest text-slate-500 block mb-1">До сплати</span>
-                     <span className="text-3xl font-serif text-white">₴{checkoutApp.price}</span>
+                 <div className="bg-[#101b2a] p-4 rounded border border-[#2a3c52] mb-6 text-center relative group">
+                     <div className="absolute right-2 top-2 text-slate-500">
+                        <Edit2 className="w-3 h-3" />
+                     </div>
+                     <span className="text-xs uppercase tracking-widest text-slate-500 block mb-1">До сплати (₴)</span>
+                     <input 
+                        type="number"
+                        value={checkoutPrice}
+                        onChange={(e) => setCheckoutPrice(e.target.value)}
+                        className="w-full bg-transparent text-3xl font-serif text-white text-center focus:outline-none border-b border-[#d6b980]/30 focus:border-[#d6b980] pb-1 transition-colors"
+                     />
                  </div>
 
                  <div className="space-y-3">

@@ -108,24 +108,27 @@ function App() {
   };
 
   // Manual close (Checkout)
-  const handleCloseAppointment = (id: string, method: PaymentMethod) => {
+  const handleCloseAppointment = (id: string, method: PaymentMethod, finalPrice?: number) => {
       const app = appointments.find(a => a.id === id);
       if (!app || app.status === 'completed') return;
 
-      // Update Appointment Status
-      setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: 'completed', paymentMethod: method } : a));
+      // Determine final price (use edited price if provided, otherwise default)
+      const priceToUse = finalPrice !== undefined ? finalPrice : app.price;
+
+      // Update Appointment Status and Price history
+      setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: 'completed', paymentMethod: method, price: priceToUse } : a));
 
       // Update Wallet Balance
       setWallets(prev => ({
           ...prev,
-          [method]: prev[method] + app.price
+          [method]: prev[method] + priceToUse
       }));
 
       // Add Income Transaction
       const newTransaction: Transaction = {
           id: Date.now().toString(),
           date: new Date(),
-          amount: app.price,
+          amount: priceToUse,
           type: 'income',
           category: ExpenseCategory.SERVICE,
           description: `Візит: ${app.service} (${app.clientName})`,
